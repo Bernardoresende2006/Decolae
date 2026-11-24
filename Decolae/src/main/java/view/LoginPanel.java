@@ -59,6 +59,7 @@ public class LoginPanel extends javax.swing.JPanel {
         this.cardPanel.add(this.senhaTxt, "growx, h 44!, gapbottom 22");
 
         this.cardPanel.add(this.entrarBtn, "growx, h 46!");
+        this.cardPanel.add(this.cadastrarBtn, "growx, h 46!, gaptop 12");
 
         this.revalidate();
         this.repaint();
@@ -102,6 +103,10 @@ public class LoginPanel extends javax.swing.JPanel {
         this.entrarBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         this.entrarBtn.putClientProperty("FlatLaf.style",
             "arc: 12; background: #0284C7; foreground: #FFFFFF; hoverBackground: #0369A1; pressedBackground: #075985; font: bold 14; borderWidth: 0");
+        
+        this.cadastrarBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        this.cadastrarBtn.putClientProperty("FlatLaf.style",
+            "arc: 12; background: #DC2626; foreground: #FFFFFF; hoverBackground: #0369A1; pressedBackground: #075985; font: bold 14; borderWidth: 0");
     }
     
     @SuppressWarnings("unchecked")
@@ -110,6 +115,7 @@ public class LoginPanel extends javax.swing.JPanel {
 
         jPanel1 = new javax.swing.JPanel();
         cardPanel = new javax.swing.JPanel();
+        cadastrarBtn = new javax.swing.JButton();
         aviaoLabel = new javax.swing.JLabel();
         cpfLabel = new javax.swing.JLabel();
         cpfEmailTxt = new javax.swing.JTextField();
@@ -121,6 +127,11 @@ public class LoginPanel extends javax.swing.JPanel {
         jPanel1.setBackground(new java.awt.Color(11, 17, 32));
 
         cardPanel.setBackground(new java.awt.Color(255, 255, 255));
+
+        cadastrarBtn.setBackground(new java.awt.Color(0, 0, 255));
+        cadastrarBtn.setFont(new java.awt.Font("Stylus BT", 1, 14)); // NOI18N
+        cadastrarBtn.setForeground(new java.awt.Color(255, 255, 255));
+        cadastrarBtn.setText("Cadastrar");
 
         cpfLabel.setFont(new java.awt.Font("Swis721 Blk BT", 0, 12)); // NOI18N
         cpfLabel.setForeground(new java.awt.Color(0, 51, 255));
@@ -156,11 +167,17 @@ public class LoginPanel extends javax.swing.JPanel {
         tituloLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         tituloLabel.setText("DECOLAÊ");
 
+        senhaTxt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                senhaTxtActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout cardPanelLayout = new javax.swing.GroupLayout(cardPanel);
         cardPanel.setLayout(cardPanelLayout);
         cardPanelLayout.setHorizontalGroup(
             cardPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, cardPanelLayout.createSequentialGroup()
+            .addGroup(cardPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(cardPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(cardPanelLayout.createSequentialGroup()
@@ -173,7 +190,10 @@ public class LoginPanel extends javax.swing.JPanel {
                         .addComponent(tituloLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(aviaoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE)
-                        .addGap(21, 21, 21))))
+                        .addGap(21, 21, 21))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, cardPanelLayout.createSequentialGroup()
+                        .addComponent(cadastrarBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())))
             .addGroup(cardPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(cardPanelLayout.createSequentialGroup()
                     .addContainerGap()
@@ -197,7 +217,9 @@ public class LoginPanel extends javax.swing.JPanel {
                 .addComponent(senhaTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(29, 29, 29)
                 .addComponent(entrarBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(103, 103, 103))
+                .addGap(18, 18, 18)
+                .addComponent(cadastrarBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(40, 40, 40))
             .addGroup(cardPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(cardPanelLayout.createSequentialGroup()
                     .addGap(133, 133, 133)
@@ -221,7 +243,7 @@ public class LoginPanel extends javax.swing.JPanel {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(134, Short.MAX_VALUE)
+                .addContainerGap(112, Short.MAX_VALUE)
                 .addComponent(cardPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(112, 112, 112))
         );
@@ -267,9 +289,14 @@ public class LoginPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_entrarBtnActionPerformed
 
+    private void senhaTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_senhaTxtActionPerformed
+        this.entrarBtn.doClick();
+    }//GEN-LAST:event_senhaTxtActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel aviaoLabel;
+    private javax.swing.JButton cadastrarBtn;
     private javax.swing.JPanel cardPanel;
     private javax.swing.JTextField cpfEmailTxt;
     private javax.swing.JLabel cpfLabel;

@@ -5,12 +5,15 @@
 package view;
 
 import control.VooPassagemControl;
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import net.miginfocom.swing.MigLayout;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 /**
  *
  * @author lflea
@@ -24,9 +27,17 @@ public class MenuClientePanel extends javax.swing.JPanel {
     private boolean carregandoHorarios;
     private int numAssentoSelecionado;
     private JButton assentoSelecionadoTemp;
+    private CardLayout cardLayoutHorario;
+    private ArrayList<LocalTime> horarios;
+    private JPanel painelCardsHorarios;
+    private JPanel cardHorarioTemp;
+    private LocalTime horarioSelecionado;
+    private boolean flagSelecionar;
     
     public MenuClientePanel(FrameTelas frameTelas) {
         initComponents();
+        estilizarComponentes();
+        
         inicializacaoVariaveis(frameTelas);
         minhasConfiguracoes();
         procuraVooOrigemDestino();
@@ -39,9 +50,22 @@ public class MenuClientePanel extends javax.swing.JPanel {
      */
     
     private void minhasConfiguracoes() {
-       
-        this.fundoPoltronaPanel.setPreferredSize(new java.awt.Dimension(580, 410));
-        this.painelAssentos.setPreferredSize(new java.awt.Dimension(536, 366));
+        ((javax.swing.GroupLayout) this.jPanel1.getLayout()).setHonorsVisibility(false);
+        this.setPreferredSize(new java.awt.Dimension(1280, 720));
+
+        JPanel painelVazio = new JPanel();
+        painelVazio.setOpaque(false);
+        this.jPanel4.add(painelVazio, "vazio");
+
+        this.cardLayoutHorario = (java.awt.CardLayout) this.jPanel4.getLayout();
+        this.cardLayoutHorario.show(this.jPanel4, "vazio");
+
+        this.cancelarBtn.setVisible(false);
+        this.comprarPassagemBtn.setVisible(false);
+
+        this.fundoPoltronaPanel.setLayout(new MigLayout("fill, insets 20"));
+        this.fundoPoltronaPanel.removeAll();
+        this.fundoPoltronaPanel.add(this.painelAssentos, "center, w 536!, h 366!");
 
         this.painelAssentos.setLayout(new MigLayout(
             "fill, wrap 10, insets 10, gap 5",
@@ -49,10 +73,14 @@ public class MenuClientePanel extends javax.swing.JPanel {
             "[fill, sg a][fill, sg a][fill, sg a][fill, sg a][fill, sg a]",
             "[fill]"
         ));
-        
+
+        this.painelCardsHorarios.setLayout(new MigLayout("wrap 1, fillx, insets 8, gapy 10"));
+        this.painelCardsHorarios.setBackground(new Color(248, 250, 252));
+        this.horariosScrollPanel.setViewportView(this.painelCardsHorarios);
+        this.horariosScrollPanel.getVerticalScrollBar().setUnitIncrement(16);
+
         this.origemCombo.setEnabled(false);
         this.destinoCombo.setEnabled(false);
-        this.horarioVooCombo.setEnabled(false);
     }
     
     private void criarAssentos() {
@@ -63,7 +91,7 @@ public class MenuClientePanel extends javax.swing.JPanel {
         ArrayList<Integer> assentosOcupados = this.control.procuraAssentosOcupados(
             "" + this.origemCombo.getSelectedItem(),
             "" + this.destinoCombo.getSelectedItem(),
-            LocalTime.parse(this.horarioVooCombo.getSelectedItem() + "")
+            this.horarioSelecionado
         );
 
         Color corLivre = new Color(34, 197, 94);
@@ -150,6 +178,91 @@ public class MenuClientePanel extends javax.swing.JPanel {
         this.control = new VooPassagemControl();
         this.numAssentoSelecionado = -1;
         this.assentoSelecionadoTemp = null;
+        this.cardLayoutHorario = (java.awt.CardLayout) this.jPanel4.getLayout();
+        this.horarios = new ArrayList<>();
+        this.painelCardsHorarios = new javax.swing.JPanel(new MigLayout("wrap 1, fillx, insets 8, gapy 10"));
+        this.flagSelecionar = false;
+    }
+    
+    private void estilizarComponentes(){
+        this.tituloLabel.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 30));
+        this.tituloLabel.setForeground(new java.awt.Color(15, 23, 42));
+        this.tituloLabel.setText("<html>DECOLA<font color='#0284C7'>Ê</font></html>");
+    }
+    
+    private void gerarCardsHorarios() {
+        this.painelCardsHorarios.removeAll();
+        this.horarioSelecionado = null;
+        this.cardHorarioTemp = null;
+
+        String estiloPadrao = "arc: 14; background: #FFFFFF; border: 1,1,1,1, #CBD5E1, 1, 14";
+        String estiloHover  = "arc: 14; background: #F0F9FF; border: 1,1,1,1, #38BDF8, 1, 14";
+        String estiloAtivo  = "arc: 14; background: #E0F2FE; border: 2,2,2,2, #0284C7, 1, 14";
+
+        if (horarios == null || horarios.isEmpty()) {
+            JLabel lblVazio = new JLabel("Nenhum horário disponível para esta rota.");
+            lblVazio.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 14));
+            lblVazio.setForeground(new Color(100, 116, 139));
+            this.painelCardsHorarios.add(lblVazio, "center, gaptop 20");
+        } else {
+            for (LocalTime h : this.horarios) {
+                JPanel card = new JPanel(new MigLayout("insets 14 18 14 18, fillx"));
+                card.putClientProperty("FlatLaf.style", estiloPadrao);
+                card.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+                JLabel lblHora = new JLabel("Partida: " + h.toString());
+                lblHora.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 17));
+                lblHora.setForeground(new Color(15, 23, 42));
+
+                JLabel lblRota = new javax.swing.JLabel(
+                    this.origemCombo.getSelectedItem() + "  →  " + this.destinoCombo.getSelectedItem()
+                );
+                lblRota.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 13));
+                lblRota.setForeground(new Color(100, 116, 139));
+
+                JLabel lblAcao = new javax.swing.JLabel("Escolher assento →");
+                lblAcao.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 13));
+                lblAcao.setForeground(new Color(2, 132, 199));
+
+                card.add(lblHora, "split 2, flowy");
+                card.add(lblRota);
+                card.add(lblAcao, "right");
+
+                card.addMouseListener(new java.awt.event.MouseAdapter() {
+                    @Override
+                    public void mouseEntered(java.awt.event.MouseEvent e) {
+                        if (cardHorarioTemp != card) {
+                            card.putClientProperty("FlatLaf.style", estiloHover);
+                        }
+                    }
+
+                    @Override
+                    public void mouseExited(java.awt.event.MouseEvent e) {
+                        if (cardHorarioTemp != card) {
+                            card.putClientProperty("FlatLaf.style", estiloPadrao);
+                        }
+                    }
+
+                    @Override
+                    public void mouseClicked(java.awt.event.MouseEvent e) {
+                        if (cardHorarioTemp != null) {
+                            cardHorarioTemp.putClientProperty("FlatLaf.style", estiloPadrao);
+                        }
+                        card.putClientProperty("FlatLaf.style", estiloAtivo);
+                        cardHorarioTemp = card;
+                        horarioSelecionado = h;
+
+                        cardLayoutHorario.show(jPanel4, fundoPoltronaPanel.getName());
+                        criarAssentos();
+                    }
+                });
+
+                this.painelCardsHorarios.add(card, "growx");
+            }
+        }
+
+        this.painelCardsHorarios.revalidate();
+        this.painelCardsHorarios.repaint();
     }
       
     @SuppressWarnings("unchecked")
@@ -164,18 +277,20 @@ public class MenuClientePanel extends javax.swing.JPanel {
         jMenu4 = new javax.swing.JMenu();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        tituloLabel = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         voltarBtn = new javax.swing.JButton();
         origemCombo = new javax.swing.JComboBox<>();
         destinoCombo = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
-        fundoPoltronaPanel = new javax.swing.JPanel();
-        painelAssentos = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         comprarPassagemBtn = new javax.swing.JButton();
-        horarioVooCombo = new javax.swing.JComboBox<>();
-        jLabel4 = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
+        fundoPoltronaPanel = new javax.swing.JPanel();
+        painelAssentos = new javax.swing.JPanel();
+        horariosScrollPanel = new javax.swing.JScrollPane();
+        cancelarBtn = new javax.swing.JButton();
+        selecionarBtn = new javax.swing.JButton();
 
         jMenu1.setText("File");
         jMenuBar1.add(jMenu1);
@@ -191,12 +306,12 @@ public class MenuClientePanel extends javax.swing.JPanel {
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
-        jPanel2.setBackground(new java.awt.Color(0, 0, 255));
+        jPanel2.setBackground(new java.awt.Color(204, 255, 255));
 
-        jLabel1.setFont(new java.awt.Font("NSimSun", 0, 48)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(0, 255, 255));
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("DECOLAÊ");
+        tituloLabel.setFont(new java.awt.Font("NSimSun", 0, 48)); // NOI18N
+        tituloLabel.setForeground(new java.awt.Color(0, 255, 255));
+        tituloLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        tituloLabel.setText("DECOLAÊ");
 
         jPanel3.setBackground(new java.awt.Color(0, 255, 255));
 
@@ -216,7 +331,7 @@ public class MenuClientePanel extends javax.swing.JPanel {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 1280, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(tituloLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 1280, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
@@ -227,8 +342,8 @@ public class MenuClientePanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(tituloLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
@@ -256,7 +371,20 @@ public class MenuClientePanel extends javax.swing.JPanel {
         jLabel2.setForeground(new java.awt.Color(0, 0, 0));
         jLabel2.setText("Cidade Origem:");
 
-        fundoPoltronaPanel.setBackground(new java.awt.Color(0, 51, 255));
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel3.setText("Cidade Destino:");
+
+        comprarPassagemBtn.setText("Comprar");
+        comprarPassagemBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comprarPassagemBtnActionPerformed(evt);
+            }
+        });
+
+        jPanel4.setLayout(new java.awt.CardLayout());
+
+        fundoPoltronaPanel.setBackground(new java.awt.Color(255, 255, 255));
         fundoPoltronaPanel.setMinimumSize(new java.awt.Dimension(531, 351));
 
         painelAssentos.setMinimumSize(new java.awt.Dimension(487, 307));
@@ -279,87 +407,87 @@ public class MenuClientePanel extends javax.swing.JPanel {
             .addGroup(fundoPoltronaPanelLayout.createSequentialGroup()
                 .addGap(23, 23, 23)
                 .addComponent(painelAssentos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(517, Short.MAX_VALUE))
         );
         fundoPoltronaPanelLayout.setVerticalGroup(
             fundoPoltronaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(fundoPoltronaPanelLayout.createSequentialGroup()
                 .addGap(23, 23, 23)
                 .addComponent(painelAssentos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(101, Short.MAX_VALUE))
         );
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel3.setText("Cidade Destino:");
+        jPanel4.add(fundoPoltronaPanel, "card2");
+        jPanel4.add(horariosScrollPanel, "card3");
 
-        comprarPassagemBtn.setText("Comprar");
-        comprarPassagemBtn.addActionListener(new java.awt.event.ActionListener() {
+        cancelarBtn.setText("Cancelar");
+        cancelarBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                comprarPassagemBtnActionPerformed(evt);
+                cancelarBtnActionPerformed(evt);
             }
         });
 
-        horarioVooCombo.addActionListener(new java.awt.event.ActionListener() {
+        selecionarBtn.setText("Selecionar");
+        selecionarBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                horarioVooComboActionPerformed(evt);
+                selecionarBtnActionPerformed(evt);
             }
         });
-
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel4.setText("Horários Disponíveis:");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(31, 31, 31)
-                .addComponent(voltarBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(406, 406, 406)
-                .addComponent(comprarPassagemBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(112, 112, 112)
-                .addComponent(fundoPoltronaPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(origemCombo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(destinoCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(horarioVooCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(163, 163, 163))
             .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 1280, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(origemCombo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(destinoCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(367, 367, 367))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(31, 31, 31)
+                        .addComponent(voltarBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(406, 406, 406)
+                        .addComponent(comprarPassagemBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(selecionarBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(cancelarBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(132, 132, 132)
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 1027, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(82, 82, 82)
-                .addComponent(fundoPoltronaPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 123, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(origemCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(destinoCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(19, 19, 19)
+                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(49, 49, 49)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(voltarBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(comprarPassagemBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(comprarPassagemBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cancelarBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(selecionarBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(25, 25, 25))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(222, 222, 222)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(origemCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(64, 64, 64)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(destinoCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(69, 69, 69)
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(horarioVooCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -377,18 +505,34 @@ public class MenuClientePanel extends javax.swing.JPanel {
     private void voltarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_voltarBtnActionPerformed
         this.origemCombo.setSelectedIndex(-1);
         this.destinoCombo.removeAllItems();
-        this.horarioVooCombo.removeAllItems();
+        this.painelCardsHorarios.removeAll();
         this.assentoSelecionadoTemp = null;
         this. numAssentoSelecionado = -1;
         this.painelAssentos.removeAll();
         this.destinoCombo.setEnabled(false);
-        this.horarioVooCombo.setEnabled(false);
+        this.cardLayoutHorario.show(jPanel4, "vazio");
+        this.horarioSelecionado = null;
+        
+        this.cardLayoutHorario.show(jPanel4, "card3");
+        this.selecionarBtn.setVisible(true);
+        this.comprarPassagemBtn.setVisible(false);
+        this.cancelarBtn.setVisible(false);
+        this.flagSelecionar = false;
         
         frameTelas.voltarTelaAnterior();        
     }//GEN-LAST:event_voltarBtnActionPerformed
 
     private void origemComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_origemComboActionPerformed
         if(this.origemCombo.getSelectedIndex() != -1 && this.carregandoCidades == false){
+            
+            if(this.flagSelecionar){
+                this.cardLayoutHorario.show(jPanel4, "card3");
+                this.selecionarBtn.setVisible(true);
+                this.comprarPassagemBtn.setVisible(false);
+                this.cancelarBtn.setVisible(false);
+                this.flagSelecionar = false;
+            }
+            
             String selecionado = ""+this.origemCombo.getSelectedItem();
             this.destinoCombo.removeAllItems();
             
@@ -408,22 +552,27 @@ public class MenuClientePanel extends javax.swing.JPanel {
 
     private void destinoComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_destinoComboActionPerformed
         if(this.destinoCombo.getSelectedIndex() != -1){
-            ArrayList<LocalTime> horarios = control.procuraHorariosVoo(this.origemCombo.getSelectedItem()+"", this.destinoCombo.getSelectedItem()+"");
+            if(this.flagSelecionar){
+                this.cardLayoutHorario.show(jPanel4, "card3");
+                this.selecionarBtn.setVisible(true);
+                this.comprarPassagemBtn.setVisible(false);
+                this.cancelarBtn.setVisible(false);
+                this.flagSelecionar = false;
+            }
+            
+            this.horarios.clear();
+            this.horarios = control.procuraHorariosVoo(this.origemCombo.getSelectedItem()+"", this.destinoCombo.getSelectedItem()+"");
             if(!horarios.isEmpty()){
                 this.carregandoCidades = true;
-                this.horarioVooCombo.removeAllItems();
-                this.horarioVooCombo.setEnabled(true);
-                
-                for(LocalTime h : horarios){
-                    this.horarioVooCombo.addItem(""+h);
-                }
+                gerarCardsHorarios();
+                this.cardLayoutHorario.show(this.jPanel4, "card3");
                 this.carregandoCidades = false;
             }            
         }
     }//GEN-LAST:event_destinoComboActionPerformed
 
     private void comprarPassagemBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comprarPassagemBtnActionPerformed
-        if(this.numAssentoSelecionado != -1 && this.origemCombo.getSelectedIndex() != -1 && this.destinoCombo.getSelectedIndex() != -1 && this.horarioVooCombo.getSelectedIndex() != -1){
+        if(this.numAssentoSelecionado != -1 && this.origemCombo.getSelectedIndex() != -1 && this.destinoCombo.getSelectedIndex() != -1 && this.horarioSelecionado != null){
             PagamentoDialog dialog = new PagamentoDialog(this.frameTelas, true);            
 
             dialog.setVisible(true); 
@@ -432,7 +581,7 @@ public class MenuClientePanel extends javax.swing.JPanel {
                 String formaPagamento = dialog.getFormaSelecionada();
 
                 boolean resultInsertPassagem = control.inserePassagemControl(this.numAssentoSelecionado,this.frameTelas.getUsuario().getCpf(), 
-                        origemCombo.getSelectedItem()+"", destinoCombo.getSelectedItem()+"", LocalTime.parse(horarioVooCombo.getSelectedItem()+""));
+                        origemCombo.getSelectedItem()+"", destinoCombo.getSelectedItem()+"", this.horarioSelecionado);
                 
                 if(resultInsertPassagem){
                     javax.swing.JOptionPane.showMessageDialog(this, 
@@ -444,7 +593,9 @@ public class MenuClientePanel extends javax.swing.JPanel {
                     criarAssentos();
                     this.origemCombo.setSelectedIndex(-1);
                     this.destinoCombo.setSelectedIndex(-1);
-                    this.horarioVooCombo.setSelectedIndex(-1);
+                    this.painelCardsHorarios.removeAll();
+                    this.cardLayoutHorario.show(jPanel4, "vazio");
+                    this.horarioSelecionado = null;
                 }else{
                     JOptionPane.showMessageDialog(null, "Algo deu errado na operação de compra!", "", JOptionPane.ERROR_MESSAGE);
                 }               
@@ -456,23 +607,33 @@ public class MenuClientePanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_comprarPassagemBtnActionPerformed
 
-    private void horarioVooComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_horarioVooComboActionPerformed
-        if(this.horarioVooCombo.getSelectedIndex() != -1 && this.carregandoHorarios == false){
-            this.painelAssentos.setVisible(true);
-            criarAssentos();
+    private void selecionarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selecionarBtnActionPerformed
+        if(this.horarioSelecionado != null){
+            this.cardLayoutHorario.show(jPanel4, "card2");
+            this.selecionarBtn.setVisible(false);
+            this.comprarPassagemBtn.setVisible(true);
+            this.cancelarBtn.setVisible(true);
+            this.flagSelecionar = true;
         }
-    }//GEN-LAST:event_horarioVooComboActionPerformed
+    }//GEN-LAST:event_selecionarBtnActionPerformed
+
+    private void cancelarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarBtnActionPerformed
+        this.cardLayoutHorario.show(jPanel4, "card3");
+        this.selecionarBtn.setVisible(true);
+        this.comprarPassagemBtn.setVisible(false);
+        this.cancelarBtn.setVisible(false);
+        this.flagSelecionar = false;
+    }//GEN-LAST:event_cancelarBtnActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton cancelarBtn;
     private javax.swing.JButton comprarPassagemBtn;
     private javax.swing.JComboBox<String> destinoCombo;
     private javax.swing.JPanel fundoPoltronaPanel;
-    private javax.swing.JComboBox<String> horarioVooCombo;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane horariosScrollPanel;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
@@ -482,8 +643,11 @@ public class MenuClientePanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JComboBox<String> origemCombo;
     private javax.swing.JPanel painelAssentos;
+    private javax.swing.JButton selecionarBtn;
+    private javax.swing.JLabel tituloLabel;
     private javax.swing.JButton voltarBtn;
     // End of variables declaration//GEN-END:variables
 }

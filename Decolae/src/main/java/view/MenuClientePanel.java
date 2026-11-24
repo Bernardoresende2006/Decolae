@@ -39,13 +39,15 @@ public class MenuClientePanel extends javax.swing.JPanel {
      */
     
     private void minhasConfiguracoes() {
-        this.painelAssentos.setMinimumSize(new java.awt.Dimension(556, 395));
-        this.painelAssentos.setPreferredSize(new java.awt.Dimension(556, 395));
-        
+       
+        this.fundoPoltronaPanel.setPreferredSize(new java.awt.Dimension(580, 410));
+        this.painelAssentos.setPreferredSize(new java.awt.Dimension(536, 366));
+
         this.painelAssentos.setLayout(new MigLayout(
-            "wrap 11",
-            "[][][][][]20[][][][][]",
-            "[]10[]10[]10[]10[]10[]10[]10[]10[]10[]"
+            "fill, wrap 10, insets 10, gap 5",
+            "[fill, sg a][fill, sg a][fill, sg a][fill, sg a][fill, sg a]22" +
+            "[fill, sg a][fill, sg a][fill, sg a][fill, sg a][fill, sg a]",
+            "[fill]"
         ));
         
         this.origemCombo.setEnabled(false);
@@ -57,64 +59,58 @@ public class MenuClientePanel extends javax.swing.JPanel {
         this.painelAssentos.removeAll();
         this.numAssentoSelecionado = -1;
         this.assentoSelecionadoTemp = null;
-        
-        ArrayList<Integer> assentosOcupados = this.control.procuraAssentosOcupados(""+this.origemCombo.getSelectedItem(), 
-                ""+this.destinoCombo.getSelectedItem(), LocalTime.parse(this.horarioVooCombo.getSelectedItem()+""));
-        
+
+        ArrayList<Integer> assentosOcupados = this.control.procuraAssentosOcupados(
+            "" + this.origemCombo.getSelectedItem(),
+            "" + this.destinoCombo.getSelectedItem(),
+            LocalTime.parse(this.horarioVooCombo.getSelectedItem() + "")
+        );
+
+        Color corLivre = new Color(34, 197, 94);
+        Color corOcupado = new Color(239, 68, 68);
+        Color corSelecionado = new Color(2, 132, 199);
+
         for (int fileira = 1; fileira <= 10; fileira++) {
-            for (int coluna = 1; coluna <= 5; coluna++) {
+            for (int coluna = 1; coluna <= 10; coluna++) {
                 int numeroAssento = (fileira - 1) * 10 + coluna;
 
-                JButton botao = new JButton(
-                    String.valueOf(numeroAssento)
+                JButton botao = new JButton(String.valueOf(numeroAssento));
+                botao.setForeground(Color.WHITE);
+                botao.setFocusPainted(false);
+                botao.putClientProperty(
+                    "FlatLaf.style",
+                    "arc: 8; margin: 0,0,0,0; font: bold 11; borderWidth: 0; disabledBackground: #EF4444; disabledText: #FFFFFF"
                 );
-                
-                if(assentosOcupados.contains(numeroAssento)){
-                    botao.setBackground(Color.red);
-                }else{
-                    botao.setBackground(Color.green);
-                    
+
+                if (assentosOcupados.contains(numeroAssento)) {
+                    botao.setBackground(corOcupado);
+                    botao.setEnabled(false);
+                } else {
+                    botao.setBackground(corLivre);
+                    botao.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
                     botao.addActionListener(e -> {
-                        this.numAssentoSelecionado = numeroAssento;
-                        botao.setBackground(Color.blue);
-                        if(this.assentoSelecionadoTemp != null) this.assentoSelecionadoTemp.setBackground(Color.green);
-                        if(this.assentoSelecionadoTemp == botao){
+                        if (this.assentoSelecionadoTemp == botao) {
+                            botao.setBackground(corLivre);
                             this.assentoSelecionadoTemp = null;
                             this.numAssentoSelecionado = -1;
-                        }else{
-                            this.assentoSelecionadoTemp = botao;
-                        }                        
-                    });
-                }                  
+                            return;
+                        }
 
-                this.painelAssentos.add(botao);
-            }
+                        if (this.assentoSelecionadoTemp != null) {
+                            this.assentoSelecionadoTemp.setBackground(corLivre);
+                        }
 
-            this.painelAssentos.add(new javax.swing.JPanel(), "w 20!");
-
-            for (int coluna = 6; coluna <= 10; coluna++) {
-                int numeroAssento = (fileira - 1) * 10 + coluna;
-
-                JButton botao = new JButton(
-                    String.valueOf(numeroAssento)
-                );
-                
-                if(assentosOcupados.contains(numeroAssento)){
-                    botao.setBackground(Color.red);
-                }else{
-                    botao.setBackground(Color.green);
-                    
-                    botao.addActionListener(e -> {
-                        this.numAssentoSelecionado = numeroAssento;
-                        botao.setBackground(Color.blue);
-                        if(this.assentoSelecionadoTemp != null) this.assentoSelecionadoTemp.setBackground(Color.green);
+                        botao.setBackground(corSelecionado);
                         this.assentoSelecionadoTemp = botao;
+                        this.numAssentoSelecionado = numeroAssento;
                     });
-                }                  
+                }
 
-                this.painelAssentos.add(botao);
+                this.painelAssentos.add(botao, "grow");
             }
         }
+
         this.painelAssentos.revalidate();
         this.painelAssentos.repaint();
     }

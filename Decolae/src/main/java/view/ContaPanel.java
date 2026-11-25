@@ -36,6 +36,7 @@ public class ContaPanel extends javax.swing.JPanel {
         this.usuario = usuario;
         this.frameTelas = frameTelas;
         this.voltarBtn = new JButton("Voltar");
+        this.salvarBtn = new JButton("Salvar Dados");
         
         this.voltarBtn.addActionListener(new ActionListener() {
             @Override
@@ -81,6 +82,7 @@ public class ContaPanel extends javax.swing.JPanel {
         this.jPanel1.add(this.jLabel3, "span 2");
         this.jPanel1.add(this.enderecoTextField, "span 2, h 42!");
         
+        this.jPanel1.add(this.salvarBtn, "span 2, h 44!, gaptop 24");
         this.jPanel1.add(this.voltarBtn, "span 2, h 44!, gaptop 24");
 
         this.revalidate();
@@ -118,6 +120,12 @@ public class ContaPanel extends javax.swing.JPanel {
         this.voltarBtn.putClientProperty("FlatLaf.style",
             "arc: 12; background: #0284C7; foreground: #FFFFFF; borderWidth: 0; " +
             "hoverBackground: #0369A1; pressedBackground: #075985; font: bold 14");
+        
+        this.salvarBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        this.salvarBtn.setFocusPainted(false);
+        this.salvarBtn.putClientProperty("FlatLaf.style",
+        "arc: 12; background: #16A34A; foreground: #FFFFFF; borderWidth: 0; " +
+        "hoverBackground: #15803D; pressedBackground: #166534; font: bold 14");
     }
     
     private void definirInformacoesCampos(){

@@ -2,6 +2,7 @@
 package model;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class Pessoa{
 
@@ -26,6 +27,19 @@ public class Pessoa{
         this.endereco = endereco;
         this.dataNascimento = dataNascimento;
         this.sexo = sexo;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Pessoa other = (Pessoa) obj;
+        return Objects.equals(this.nome, other.nome)
+            && Objects.equals(this.cpf, other.cpf)
+            && Objects.equals(this.email, other.email)
+            && Objects.equals(this.endereco, other.endereco)
+            && Objects.equals(this.dataNascimento, other.dataNascimento);
     }
 
     public String getCpf() {

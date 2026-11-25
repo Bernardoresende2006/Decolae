@@ -1,13 +1,19 @@
 
 package view;
 
+import control.PessoaControl;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Date;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import model.Pessoa;
 import net.miginfocom.swing.MigLayout;
@@ -22,6 +28,7 @@ public class ContaPanel extends javax.swing.JPanel {
     private JButton voltarBtn;
     private JButton salvarBtn;
     private Pessoa usuario;
+    private PessoaControl control;
     
     public ContaPanel(FrameTelas frameTelas, Pessoa usuario) {
         initComponents();
@@ -33,6 +40,7 @@ public class ContaPanel extends javax.swing.JPanel {
     }
     
     private void inicializaVariaveis(FrameTelas frameTelas, Pessoa usuario){
+        this.control = new PessoaControl();
         this.usuario = usuario;
         this.frameTelas = frameTelas;
         this.voltarBtn = new JButton("Voltar");
@@ -41,8 +49,27 @@ public class ContaPanel extends javax.swing.JPanel {
         this.voltarBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                definirInformacoesCampos();
                 frameTelas.trocarTela(frameTelas.getTelaAnterior());
             }
+        });
+        
+        this.salvarBtn.addActionListener(e -> {                
+            Pessoa usuarioNovo = new Pessoa(this.cpfTextField.getText(), this.nomeTextField.getText(), this.emailTextField.getText(),
+                    this.usuario.getSenha(), this.enderecoTextField.getText(), this.usuario.getDataNascimento(), this.usuario.getSexo());
+                            
+            boolean resultado = this.control.atualizaDadosConta(usuario, usuarioNovo);
+            
+            if(resultado) JOptionPane.showMessageDialog(this, "Atualização Feita");
+            else{
+                JOptionPane.showMessageDialog(this, "Nada a ser atualizado!!!", "", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            this.usuario.setEndereco(usuarioNovo.getEndereco());
+            this.usuario.setNome(usuarioNovo.getNome());
+            this.frameTelas.setUsuario(usuarioNovo);
+            this.frameTelas.trocarTela(this.frameTelas.getTelaAnterior());
         });
     }
     
@@ -137,8 +164,6 @@ public class ContaPanel extends javax.swing.JPanel {
         
         this.cpfTextField.setEnabled(false);
         this.emailTextField.setEnabled(false);
-        this.enderecoTextField.setEnabled(false);
-        this.nomeTextField.setEnabled(false);
         this.dataNascTextField.setEnabled(false);
     }
 

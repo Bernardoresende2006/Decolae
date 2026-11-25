@@ -19,5 +19,11 @@ public class PessoaControl {
     public String verificaCargo(String cpf){
         return dao.consultaCargoFuncionario(cpf);
     }
+    
+    public boolean atualizaDadosConta(Pessoa usuarioAntigo, Pessoa usuarioNovo){
+        if(usuarioAntigo.equals(usuarioNovo)) return false;
+        
+        return dao.atualizar(usuarioNovo);
+    }
 
 }

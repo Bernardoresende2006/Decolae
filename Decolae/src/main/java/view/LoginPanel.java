@@ -8,6 +8,7 @@ import control.PessoaControl;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import model.Pessoa;
 
 /**
@@ -272,6 +273,9 @@ public class LoginPanel extends javax.swing.JPanel {
         Pessoa pessoaResultado = control.verificaLogin(pessoaEntrada);
         
         if(pessoaResultado != null){
+            JPanel contaPanel = new ContaPanel(this.frameTelas, pessoaResultado);
+            this.frameTelas.add(contaPanel, "contaPanel");
+            
             this.frameTelas.setUsuario(pessoaResultado);
             String cargo = control.verificaCargo(pessoaResultado.getCpf());
             

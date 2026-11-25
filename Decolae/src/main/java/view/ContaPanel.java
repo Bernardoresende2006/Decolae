@@ -2,9 +2,14 @@
 package view;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import model.Pessoa;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -14,17 +19,30 @@ import net.miginfocom.swing.MigLayout;
 public class ContaPanel extends javax.swing.JPanel {
 
     private FrameTelas frameTelas;
+    private JButton voltarBtn;
+    private JButton salvarBtn;
+    private Pessoa usuario;
     
-    public ContaPanel(FrameTelas frametelas) {
+    public ContaPanel(FrameTelas frameTelas, Pessoa usuario) {
         initComponents();
-        inicializaVariaveis(frameTelas);
+        inicializaVariaveis(frameTelas, usuario);
         
         minhasConfiguracoes();
         estilizarComponentes();
+        definirInformacoesCampos();
     }
     
-    private void inicializaVariaveis(FrameTelas frameTelas){
+    private void inicializaVariaveis(FrameTelas frameTelas, Pessoa usuario){
+        this.usuario = usuario;
         this.frameTelas = frameTelas;
+        this.voltarBtn = new JButton("Voltar");
+        
+        this.voltarBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frameTelas.trocarTela(frameTelas.getTelaAnterior());
+            }
+        });
     }
     
     private void minhasConfiguracoes() {
@@ -62,6 +80,8 @@ public class ContaPanel extends javax.swing.JPanel {
 
         this.jPanel1.add(this.jLabel3, "span 2");
         this.jPanel1.add(this.enderecoTextField, "span 2, h 42!");
+        
+        this.jPanel1.add(this.voltarBtn, "span 2, h 44!, gaptop 24");
 
         this.revalidate();
         this.repaint();
@@ -92,6 +112,26 @@ public class ContaPanel extends javax.swing.JPanel {
             campo.putClientProperty("FlatLaf.style",
                 "arc: 12; borderColor: #CBD5E1; focusedBorderColor: #0284C7; borderWidth: 1; focusWidth: 2; margin: 0,12,0,12");
         }
+        
+        this.voltarBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        this.voltarBtn.setFocusPainted(false);
+        this.voltarBtn.putClientProperty("FlatLaf.style",
+            "arc: 12; background: #0284C7; foreground: #FFFFFF; borderWidth: 0; " +
+            "hoverBackground: #0369A1; pressedBackground: #075985; font: bold 14");
+    }
+    
+    private void definirInformacoesCampos(){
+        this.cpfTextField.setText(this.usuario.getCpf());
+        this.emailTextField.setText(this.usuario.getEmail());
+        this.enderecoTextField.setText(this.usuario.getEndereco());
+        this.nomeTextField.setText(this.usuario.getNome());
+        this.dataNascTextField.setText(this.usuario.getDataNascimento()+"");
+        
+        this.cpfTextField.setEnabled(false);
+        this.emailTextField.setEnabled(false);
+        this.enderecoTextField.setEnabled(false);
+        this.nomeTextField.setEnabled(false);
+        this.dataNascTextField.setEnabled(false);
     }
 
     /**

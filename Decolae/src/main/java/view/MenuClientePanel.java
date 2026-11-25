@@ -7,6 +7,8 @@ package view;
 import control.VooPassagemControl;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import net.miginfocom.swing.MigLayout;
@@ -24,7 +26,6 @@ public class MenuClientePanel extends javax.swing.JPanel {
     private VooPassagemControl control;
     private ArrayList<String> cidades;
     private boolean carregandoCidades;
-    private boolean carregandoHorarios;
     private int numAssentoSelecionado;
     private JButton assentoSelecionadoTemp;
     private CardLayout cardLayoutHorario;
@@ -33,12 +34,13 @@ public class MenuClientePanel extends javax.swing.JPanel {
     private JPanel cardHorarioTemp;
     private LocalTime horarioSelecionado;
     private boolean flagSelecionar;
+    private JButton contaBtn;
     
     public MenuClientePanel(FrameTelas frameTelas) {
         initComponents();
-        estilizarComponentes();
-        
         inicializacaoVariaveis(frameTelas);
+        
+        estilizarComponentes();
         minhasConfiguracoes();
         procuraVooOrigemDestino();
     }
@@ -53,6 +55,14 @@ public class MenuClientePanel extends javax.swing.JPanel {
         ((javax.swing.GroupLayout) this.jPanel1.getLayout()).setHonorsVisibility(false);
         this.setPreferredSize(new java.awt.Dimension(1280, 720));
 
+        this.jPanel2.setMinimumSize(new java.awt.Dimension(1280, 76));
+        this.jPanel2.setPreferredSize(new java.awt.Dimension(1280, 76));
+        this.jPanel2.setLayout(new MigLayout("fill, insets 0 24 0 24", "[180!][grow, center][180!]"));
+        this.jPanel2.removeAll();
+        this.jPanel2.add(new JLabel()); // Espaçador esquerdo para manter o título centralizado
+        this.jPanel2.add(this.tituloLabel, "center");
+        this.jPanel2.add(this.contaBtn, "right");
+        
         JPanel painelVazio = new JPanel();
         painelVazio.setOpaque(false);
         this.jPanel4.add(painelVazio, "vazio");
@@ -179,12 +189,25 @@ public class MenuClientePanel extends javax.swing.JPanel {
         this.horarios = new ArrayList<>();
         this.painelCardsHorarios = new javax.swing.JPanel(new MigLayout("wrap 1, fillx, insets 8, gapy 10"));
         this.flagSelecionar = false;
+        
+        this.contaBtn = new JButton("Conta");
     }
     
     private void estilizarComponentes(){
         this.tituloLabel.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 30));
         this.tituloLabel.setForeground(new java.awt.Color(15, 23, 42));
         this.tituloLabel.setText("<html>DECOLA<font color='#0284C7'>Ê</font></html>");
+        
+        this.contaBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        this.contaBtn.putClientProperty("FlatLaf.style",
+        "arc: 999; background: #0284C7; foreground: #FFFFFF; borderWidth: 0; " +
+        "hoverBackground: #0369A1; pressedBackground: #075985; font: bold 13; margin: 7,18,7,18");
+        this.contaBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frameTelas.trocarTela("contaPanel");
+            }
+        });
     }
     
     private void gerarCardsHorarios() {
@@ -328,8 +351,9 @@ public class MenuClientePanel extends javax.swing.JPanel {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(tituloLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 1280, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(507, 507, 507)
+                .addComponent(tituloLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 316, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(463, 463, 463)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
@@ -339,7 +363,7 @@ public class MenuClientePanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel2Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addComponent(tituloLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
@@ -622,7 +646,7 @@ public class MenuClientePanel extends javax.swing.JPanel {
         this.flagSelecionar = false;
     }//GEN-LAST:event_cancelarBtnActionPerformed
 
-
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelarBtn;
     private javax.swing.JButton comprarPassagemBtn;

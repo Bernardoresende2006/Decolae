@@ -34,6 +34,15 @@ public class MenuClientePanel extends javax.swing.JPanel {
     private LocalTime horarioSelecionado;
     private boolean flagSelecionar;
     
+    private final Color FUNDO = new Color(11, 18, 32);
+    private final Color AZUL = new Color(8, 126, 189);
+    private final Color CIANO = new Color(56, 189, 248);
+    private final Color BRANCO = Color.WHITE;
+    private final Color CINZA = new Color(148, 163, 184);
+    private final Color FUNDO_COMPONENTE = new Color(30, 41, 59);
+    private final Color CINZA_CLARO = new Color(190, 190, 190);
+    private final Color PRETO = Color.BLACK;
+    
     public MenuClientePanel(FrameTelas frameTelas) {
         initComponents();
         estilizarComponentes();
@@ -74,12 +83,12 @@ public class MenuClientePanel extends javax.swing.JPanel {
         ));
 
         this.painelCardsHorarios.setLayout(new MigLayout("wrap 1, fillx, insets 8, gapy 10"));
-        this.painelCardsHorarios.setBackground(new Color(248, 250, 252));
+        this.painelCardsHorarios.setBackground(FUNDO);
         this.horariosScrollPanel.setViewportView(this.painelCardsHorarios);
         this.horariosScrollPanel.getVerticalScrollBar().setUnitIncrement(16);
 
-        this.origemCombo.setEnabled(false);
-        this.destinoCombo.setEnabled(false);
+        this.origemCombo.setEnabled(true);
+        this.destinoCombo.setEnabled(true);
     }
     
     private void criarAssentos() {
@@ -147,7 +156,7 @@ public class MenuClientePanel extends javax.swing.JPanel {
         if(!this.cidades.isEmpty()){
             this.origemCombo.setEnabled(true);
             this.carregandoCidades = true;
-            this.origemCombo.removeAll();
+            this.origemCombo.removeAllItems();
             
             for(int i=0; i < cidades.size(); i++){
                 if(i%2 == 0){
@@ -181,10 +190,88 @@ public class MenuClientePanel extends javax.swing.JPanel {
         this.flagSelecionar = false;
     }
     
-    private void estilizarComponentes(){
-        this.tituloLabel.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 30));
-        this.tituloLabel.setForeground(new java.awt.Color(15, 23, 42));
-        this.tituloLabel.setText("<html>DECOLA<font color='#0284C7'>Ê</font></html>");
+    private void estilizarComponentes() {
+
+        // Fundo principal
+        this.jPanel1.setBackground(FUNDO);
+
+        // Cabeçalho
+        this.jPanel2.setBackground(FUNDO);
+        this.jPanel3.setBackground(CIANO);
+
+        this.tituloLabel.setFont(
+            new java.awt.Font("SansSerif", java.awt.Font.BOLD, 32)
+        );
+        this.tituloLabel.setForeground(BRANCO);
+        this.tituloLabel.setText(
+            "<html>DECOLA<font color='#38BDF8'>Ê</font></html>"
+        );
+
+        // Textos dos campos
+        this.jLabel2.setFont(
+            new java.awt.Font("SansSerif", java.awt.Font.BOLD, 14)
+        );
+        this.jLabel2.setForeground(BRANCO);
+
+        this.jLabel3.setFont(
+            new java.awt.Font("SansSerif", java.awt.Font.BOLD, 14)
+        );
+        this.jLabel3.setForeground(BRANCO);
+
+// Campos de origem e destino
+String estiloCombo =
+    "background: #BEBEBE; " +
+    "foreground: #000000; " +
+    "buttonBackground: #BEBEBE; " +
+    "buttonArrowColor: #000000; " +
+    "arc: 10";
+
+origemCombo.setEnabled(true);
+destinoCombo.setEnabled(true);
+
+origemCombo.setBackground(CINZA_CLARO);
+destinoCombo.setBackground(CINZA_CLARO);
+
+origemCombo.setForeground(PRETO);
+destinoCombo.setForeground(PRETO);
+
+origemCombo.putClientProperty("FlatLaf.style", estiloCombo);
+destinoCombo.putClientProperty("FlatLaf.style", estiloCombo);
+
+        // Área de horários e assentos
+        this.jPanel4.setBackground(FUNDO);
+        this.fundoPoltronaPanel.setBackground(FUNDO);
+        this.painelAssentos.setBackground(FUNDO);
+        this.horariosScrollPanel.setBackground(FUNDO);
+        this.horariosScrollPanel.getViewport().setBackground(FUNDO);
+
+        // Botões
+        estilizarBotao(voltarBtn);
+        estilizarBotao(selecionarBtn);
+        estilizarBotao(comprarPassagemBtn);
+        estilizarBotao(cancelarBtn);
+    }
+    
+    private void estilizarBotao(JButton botao) {
+
+        botao.setBackground(AZUL);
+        botao.setForeground(BRANCO);
+
+        botao.setFont(
+            new java.awt.Font("SansSerif", java.awt.Font.BOLD, 14)
+        );
+
+        botao.setFocusPainted(false);
+        botao.setCursor(
+            new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR)
+        );
+
+        botao.putClientProperty(
+            "FlatLaf.style",
+            "arc: 12; background: #087EBD; foreground: #FFFFFF; " +
+            "hoverBackground: #1EA0DC; pressedBackground: #075985; " +
+            "borderWidth: 0"
+        );
     }
     
     private void gerarCardsHorarios() {
@@ -192,9 +279,11 @@ public class MenuClientePanel extends javax.swing.JPanel {
         this.horarioSelecionado = null;
         this.cardHorarioTemp = null;
 
-        String estiloPadrao = "arc: 14; background: #FFFFFF; border: 1,1,1,1, #CBD5E1, 1, 14";
-        String estiloHover  = "arc: 14; background: #F0F9FF; border: 1,1,1,1, #38BDF8, 1, 14";
-        String estiloAtivo  = "arc: 14; background: #E0F2FE; border: 2,2,2,2, #0284C7, 1, 14";
+        String estiloPadrao = "arc: 14; background: #172235; border: 1,1,1,1, #334155, 1, 14";
+
+        String estiloHover = "arc: 14; background: #1E3A50; border: 1,1,1,1, #38BDF8, 1, 14";
+
+        String estiloAtivo = "arc: 14; background: #0C4A6E; border: 2,2,2,2, #38BDF8, 1, 14";
 
         if (horarios == null || horarios.isEmpty()) {
             JLabel lblVazio = new JLabel("Nenhum horário disponível para esta rota.");
@@ -209,13 +298,13 @@ public class MenuClientePanel extends javax.swing.JPanel {
 
                 JLabel lblHora = new JLabel("Partida: " + h.toString());
                 lblHora.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 17));
-                lblHora.setForeground(new Color(15, 23, 42));
+                lblHora.setForeground(BRANCO);
 
                 JLabel lblRota = new javax.swing.JLabel(
                     this.origemCombo.getSelectedItem() + "  →  " + this.destinoCombo.getSelectedItem()
                 );
                 lblRota.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 13));
-                lblRota.setForeground(new Color(100, 116, 139));
+                lblRota.setForeground(CINZA);
 
                 JLabel lblAcao = new javax.swing.JLabel("Escolher assento →");
                 lblAcao.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 13));

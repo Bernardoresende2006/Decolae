@@ -1,3 +1,4 @@
+
 package view;
 
 import java.awt.BorderLayout;
@@ -5,11 +6,11 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
@@ -17,9 +18,13 @@ public class MenuMembroPanel extends JPanel {
 
     private FrameTelas frameTelas;
 
-    private final Color AZUL = new Color(0, 0, 170);
-    private final Color CIANO = new Color(0, 255, 255);
+    private final Color FUNDO = new Color(11, 18, 32);
+    private final Color AZUL = new Color(8, 126, 189);
+    private final Color CIANO = new Color(56, 189, 248);
     private final Color BRANCO = Color.WHITE;
+    private final Color CINZA = new Color(148, 163, 184);
+
+    private final String FONTE = "SansSerif";
 
     public MenuMembroPanel(FrameTelas frameTelas) {
         this.frameTelas = frameTelas;
@@ -28,98 +33,158 @@ public class MenuMembroPanel extends JPanel {
 
     private void configurarTela() {
         setLayout(new BorderLayout());
-        setBackground(BRANCO);
+        setBackground(FUNDO);
 
         // Cabeçalho
         JPanel cabecalho = new JPanel(new BorderLayout());
-        cabecalho.setBackground(AZUL);
-        cabecalho.setPreferredSize(new Dimension(0, 100));
+        cabecalho.setBackground(FUNDO);
         cabecalho.setBorder(
-            BorderFactory.createEmptyBorder(10, 25, 10, 25)
+            BorderFactory.createEmptyBorder(25, 40, 15, 40)
         );
 
         JLabel titulo = new JLabel("DECOLAÊ");
-        titulo.setForeground(CIANO);
-        titulo.setFont(new Font("SansSerif", Font.BOLD, 38));
+        titulo.setForeground(BRANCO);
+        titulo.setFont(new Font(FONTE, Font.BOLD, 32));
 
         JLabel subtitulo = new JLabel("PAINEL DO MEMBRO DA TRIPULAÇÃO");
-        subtitulo.setForeground(BRANCO);
-        subtitulo.setFont(new Font("SansSerif", Font.PLAIN, 16));
-        subtitulo.setHorizontalAlignment(SwingConstants.RIGHT);
+        subtitulo.setForeground(CIANO);
+        subtitulo.setFont(new Font(FONTE, Font.BOLD, 12));
 
         cabecalho.add(titulo, BorderLayout.WEST);
         cabecalho.add(subtitulo, BorderLayout.EAST);
 
-        add(cabecalho, BorderLayout.NORTH);
+        JPanel linha = new JPanel();
+        linha.setBackground(CIANO);
+        linha.setPreferredSize(new Dimension(0, 2));
+
+        JPanel topo = new JPanel(new BorderLayout());
+        topo.setBackground(FUNDO);
+        topo.add(cabecalho, BorderLayout.CENTER);
+        topo.add(linha, BorderLayout.SOUTH);
+
+        add(topo, BorderLayout.NORTH);
 
         // Área central
-        JPanel conteudo = new JPanel(new BorderLayout(10, 25));
-        conteudo.setBackground(BRANCO);
-        conteudo.setBorder(
-            BorderFactory.createEmptyBorder(35, 45, 35, 45)
-        );
+        JPanel conteudo = new JPanel(new GridBagLayout());
+        conteudo.setBackground(FUNDO);
+
+        JPanel opcoes = new JPanel(new GridLayout(4, 1, 0, 18));
+        opcoes.setBackground(FUNDO);
+        opcoes.setPreferredSize(new Dimension(430, 350));
 
         JLabel mensagem = new JLabel(
-            "Bem-vindo à área do tripulante",
+            "Bem-vindo!",
             SwingConstants.CENTER
         );
-        mensagem.setFont(new Font("SansSerif", Font.BOLD, 30));
-        mensagem.setForeground(AZUL);
+        mensagem.setFont(new Font(FONTE, Font.BOLD, 30));
+        mensagem.setForeground(BRANCO);
 
-        conteudo.add(mensagem, BorderLayout.NORTH);
+        JLabel descricao = new JLabel(
+            "O que deseja fazer?",
+            SwingConstants.CENTER
+        );
+        descricao.setFont(new Font(FONTE, Font.PLAIN, 15));
+        descricao.setForeground(CINZA);
 
-        
-        // Dois retângulos de opções
-        JPanel painelOpcoes = new JPanel(new GridLayout(1, 2, 100, 0));
-        painelOpcoes.setBackground(BRANCO);
-
-        JButton funcionariosButton = criarBotao("Consultar voos escalados");
+        JButton voosButton = criarBotao("Consultar voos escalados");
         JButton usuariosButton = criarBotao("Navegar como cliente");
 
-        usuariosButton.addActionListener(e -> {
-            frameTelas.abrirCliente("menuMembroPanel");
-        });
+        usuariosButton.addActionListener(e ->
+            frameTelas.abrirCliente("menuMembroPanel")
+        );
 
-        // Define explicitamente o tamanho dos botões
-        funcionariosButton.setPreferredSize(new Dimension(400, 200));
-        usuariosButton.setPreferredSize(new Dimension(400, 200));
+        opcoes.add(mensagem);
+        opcoes.add(descricao);
+        opcoes.add(voosButton);
+        opcoes.add(usuariosButton);
 
-        painelOpcoes.add(funcionariosButton);
-        painelOpcoes.add(usuariosButton);
-
-        // Centraliza os dois botões
-        JPanel centralizador = new JPanel(new java.awt.GridBagLayout());
-        centralizador.setBackground(BRANCO);
-        centralizador.add(painelOpcoes);
-
-        conteudo.add(centralizador, BorderLayout.CENTER);
+        conteudo.add(opcoes);
         add(conteudo, BorderLayout.CENTER);
 
         // Rodapé
-        JButton sairBtn = new JButton("Sair");
-        sairBtn.setFont(new Font("SansSerif", Font.BOLD, 14));
+        JButton sairBtn = new JButton("Sair da conta");
+        sairBtn.setFont(new Font(FONTE, Font.PLAIN, 13));
+        sairBtn.setForeground(CINZA);
+        sairBtn.setBackground(FUNDO);
+        sairBtn.setBorderPainted(false);
+        sairBtn.setFocusPainted(false);
+        sairBtn.setContentAreaFilled(false);
+        sairBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
         sairBtn.addActionListener(e ->
             frameTelas.trocarTela("loginPanel")
         );
 
         JPanel rodape = new JPanel();
-        rodape.setBackground(BRANCO);
+        rodape.setBackground(FUNDO);
         rodape.setBorder(
-            BorderFactory.createEmptyBorder(0, 0, 20, 0)
+            BorderFactory.createEmptyBorder(10, 10, 20, 10)
         );
         rodape.add(sairBtn);
 
         add(rodape, BorderLayout.SOUTH);
+    }
 
+    // Botão arredondado com efeito hover
+    private class BotaoArredondado extends JButton {
+
+        private Color corNormal;
+        private Color corHover = new Color(30, 160, 220);
+
+        public BotaoArredondado(String texto) {
+            super(texto);
+
+            setContentAreaFilled(false);
+            setFocusPainted(false);
+            setBorderPainted(false);
+            setOpaque(false);
+
+            addMouseListener(new java.awt.event.MouseAdapter() {
+
+                @Override
+                public void mouseEntered(java.awt.event.MouseEvent e) {
+                    setBackground(corHover);
+                }
+
+                @Override
+                public void mouseExited(java.awt.event.MouseEvent e) {
+                    setBackground(corNormal);
+                }
+            });
+        }
+
+        @Override
+        protected void paintComponent(java.awt.Graphics g) {
+            java.awt.Graphics2D g2 =
+                (java.awt.Graphics2D) g.create();
+
+            g2.setRenderingHint(
+                java.awt.RenderingHints.KEY_ANTIALIASING,
+                java.awt.RenderingHints.VALUE_ANTIALIAS_ON
+            );
+
+            g2.setColor(getBackground());
+            g2.fillRoundRect(
+                0, 0, getWidth(), getHeight(), 15, 15
+            );
+
+            g2.dispose();
+            super.paintComponent(g);
+        }
     }
 
     private JButton criarBotao(String texto) {
-        JButton botao = new JButton(texto);
+        BotaoArredondado botao = new BotaoArredondado(texto);
 
+        botao.setPreferredSize(new Dimension(430, 65));
         botao.setBackground(AZUL);
+        botao.corNormal = AZUL;
         botao.setForeground(BRANCO);
-        botao.setFont(new Font("SansSerif", Font.BOLD, 16));
-        botao.setFocusPainted(false);
+        botao.setFont(new Font(FONTE, Font.BOLD, 16));
+        botao.setBorder(
+            BorderFactory.createEmptyBorder(15, 20, 15, 20)
+        );
+        botao.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         return botao;
     }

@@ -63,14 +63,13 @@ public class MenuClientePanel extends javax.swing.JPanel {
         this.cancelarBtn.setVisible(false);
         this.comprarPassagemBtn.setVisible(false);
 
-        this.fundoPoltronaPanel.setLayout(new MigLayout("fill, insets 20"));
+        this.fundoPoltronaPanel.setLayout(new MigLayout("fill, insets 10"));
         this.fundoPoltronaPanel.removeAll();
-        this.fundoPoltronaPanel.add(this.painelAssentos, "center, w 536!, h 366!");
+        this.fundoPoltronaPanel.add(this.painelAssentos, "center, w 330!, h 390!");
 
         this.painelAssentos.setLayout(new MigLayout(
-            "fill, wrap 10, insets 10, gap 5",
-            "[fill, sg a][fill, sg a][fill, sg a][fill, sg a][fill, sg a]22" +
-            "[fill, sg a][fill, sg a][fill, sg a][fill, sg a][fill, sg a]",
+            "fill, wrap 6, insets 8, gapx 4, gapy 2",
+            "[fill, sg a][fill, sg a][fill, sg a]26[fill, sg a][fill, sg a][fill, sg a]",
             "[fill]"
         ));
 
@@ -98,45 +97,43 @@ public class MenuClientePanel extends javax.swing.JPanel {
         Color corOcupado = new Color(239, 68, 68);
         Color corSelecionado = new Color(2, 132, 199);
 
-        for (int fileira = 1; fileira <= 10; fileira++) {
-            for (int coluna = 1; coluna <= 10; coluna++) {
-                int numeroAssento = (fileira - 1) * 10 + coluna;
+        for (int i = 1; i <= 102; i++) {
+            int numeroAssento = i;
 
-                JButton botao = new JButton(String.valueOf(numeroAssento));
-                botao.setForeground(Color.WHITE);
-                botao.setFocusPainted(false);
-                botao.putClientProperty(
-                    "FlatLaf.style",
-                    "arc: 8; margin: 0,0,0,0; font: bold 11; borderWidth: 0; disabledBackground: #EF4444; disabledText: #FFFFFF"
-                );
+            JButton botao = new JButton(String.valueOf(numeroAssento));
+            botao.setForeground(Color.WHITE);
+            botao.setFocusPainted(false);
+            botao.putClientProperty(
+                "FlatLaf.style",
+                "arc: 6; margin: 0,0,0,0; font: bold 10; borderWidth: 0; disabledBackground: #EF4444; disabledText: #FFFFFF"
+            );
 
-                if (assentosOcupados.contains(numeroAssento)) {
-                    botao.setBackground(corOcupado);
-                    botao.setEnabled(false);
-                } else {
-                    botao.setBackground(corLivre);
-                    botao.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+            if (assentosOcupados.contains(numeroAssento)) {
+                botao.setBackground(corOcupado);
+                botao.setEnabled(false);
+            } else {
+                botao.setBackground(corLivre);
+                botao.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
-                    botao.addActionListener(e -> {
-                        if (this.assentoSelecionadoTemp == botao) {
-                            botao.setBackground(corLivre);
-                            this.assentoSelecionadoTemp = null;
-                            this.numAssentoSelecionado = -1;
-                            return;
-                        }
+                botao.addActionListener(e -> {
+                    if (this.assentoSelecionadoTemp == botao) {
+                        botao.setBackground(corLivre);
+                        this.assentoSelecionadoTemp = null;
+                        this.numAssentoSelecionado = -1;
+                        return;
+                    }
 
-                        if (this.assentoSelecionadoTemp != null) {
-                            this.assentoSelecionadoTemp.setBackground(corLivre);
-                        }
+                    if (this.assentoSelecionadoTemp != null) {
+                        this.assentoSelecionadoTemp.setBackground(corLivre);
+                    }
 
-                        botao.setBackground(corSelecionado);
-                        this.assentoSelecionadoTemp = botao;
-                        this.numAssentoSelecionado = numeroAssento;
-                    });
-                }
-
-                this.painelAssentos.add(botao, "grow");
+                    botao.setBackground(corSelecionado);
+                    this.assentoSelecionadoTemp = botao;
+                    this.numAssentoSelecionado = numeroAssento;
+                });
             }
+
+            this.painelAssentos.add(botao, "grow");
         }
 
         this.painelAssentos.revalidate();

@@ -24,7 +24,6 @@ public class MenuClientePanel extends javax.swing.JPanel {
     private VooPassagemControl control;
     private ArrayList<String> cidades;
     private boolean carregandoCidades;
-    private boolean carregandoHorarios;
     private int numAssentoSelecionado;
     private JButton assentoSelecionadoTemp;
     private CardLayout cardLayoutHorario;
@@ -33,6 +32,7 @@ public class MenuClientePanel extends javax.swing.JPanel {
     private JPanel cardHorarioTemp;
     private LocalTime horarioSelecionado;
     private boolean flagSelecionar;
+    private JButton contaBtn;
     
     private final Color FUNDO = new Color(11, 18, 32);
     private final Color AZUL = new Color(8, 126, 189);
@@ -45,9 +45,9 @@ public class MenuClientePanel extends javax.swing.JPanel {
     
     public MenuClientePanel(FrameTelas frameTelas) {
         initComponents();
-        estilizarComponentes();
-        
         inicializacaoVariaveis(frameTelas);
+        
+        estilizarComponentes();
         minhasConfiguracoes();
         procuraVooOrigemDestino();
     }
@@ -62,6 +62,14 @@ public class MenuClientePanel extends javax.swing.JPanel {
         ((javax.swing.GroupLayout) this.jPanel1.getLayout()).setHonorsVisibility(false);
         this.setPreferredSize(new java.awt.Dimension(1280, 720));
 
+        this.jPanel2.setMinimumSize(new java.awt.Dimension(1280, 76));
+        this.jPanel2.setPreferredSize(new java.awt.Dimension(1280, 76));
+        this.jPanel2.setLayout(new MigLayout("fill, insets 0 24 0 24", "[180!][grow, center][180!]"));
+        this.jPanel2.removeAll();
+        this.jPanel2.add(new JLabel()); // Espaçador esquerdo para manter o título centralizado
+        this.jPanel2.add(this.tituloLabel, "center");
+        this.jPanel2.add(this.contaBtn, "right");
+        
         JPanel painelVazio = new JPanel();
         painelVazio.setOpaque(false);
         this.jPanel4.add(painelVazio, "vazio");
@@ -188,92 +196,109 @@ public class MenuClientePanel extends javax.swing.JPanel {
         this.horarios = new ArrayList<>();
         this.painelCardsHorarios = new javax.swing.JPanel(new MigLayout("wrap 1, fillx, insets 8, gapy 10"));
         this.flagSelecionar = false;
+        
+        this.contaBtn = new JButton("Conta");
     }
     
     private void estilizarComponentes() {
 
-        // Fundo principal
-        this.jPanel1.setBackground(FUNDO);
+       // Fundo principal
+       this.jPanel1.setBackground(FUNDO);
 
-        // Cabeçalho
-        this.jPanel2.setBackground(FUNDO);
-        this.jPanel3.setBackground(CIANO);
+       // Cabeçalho
+       this.jPanel2.setBackground(FUNDO);
+       this.jPanel3.setBackground(CIANO);
 
-        this.tituloLabel.setFont(
-            new java.awt.Font("SansSerif", java.awt.Font.BOLD, 32)
-        );
-        this.tituloLabel.setForeground(BRANCO);
-        this.tituloLabel.setText(
-            "<html>DECOLA<font color='#38BDF8'>Ê</font></html>"
-        );
+       this.tituloLabel.setFont(
+           new java.awt.Font("SansSerif", java.awt.Font.BOLD, 32)
+       );
+       this.tituloLabel.setForeground(BRANCO);
+       this.tituloLabel.setText(
+           "<html>DECOLA<font color='#38BDF8'>Ê</font></html>"
+       );
 
-        // Textos dos campos
-        this.jLabel2.setFont(
-            new java.awt.Font("SansSerif", java.awt.Font.BOLD, 14)
-        );
-        this.jLabel2.setForeground(BRANCO);
+       // Textos dos campos
+       this.jLabel2.setFont(
+           new java.awt.Font("SansSerif", java.awt.Font.BOLD, 14)
+       );
+       this.jLabel2.setForeground(BRANCO);
 
-        this.jLabel3.setFont(
-            new java.awt.Font("SansSerif", java.awt.Font.BOLD, 14)
-        );
-        this.jLabel3.setForeground(BRANCO);
+       this.jLabel3.setFont(
+           new java.awt.Font("SansSerif", java.awt.Font.BOLD, 14)
+       );
+       this.jLabel3.setForeground(BRANCO);
 
-// Campos de origem e destino
-String estiloCombo =
-    "background: #BEBEBE; " +
-    "foreground: #000000; " +
-    "buttonBackground: #BEBEBE; " +
-    "buttonArrowColor: #000000; " +
-    "arc: 10";
+       // Campos de origem e destino
+       String estiloCombo =
+           "background: #BEBEBE; " +
+           "foreground: #000000; " +
+           "buttonBackground: #BEBEBE; " +
+           "buttonArrowColor: #000000; " +
+           "arc: 10";
 
-origemCombo.setEnabled(true);
-destinoCombo.setEnabled(true);
+       origemCombo.setEnabled(true);
+       destinoCombo.setEnabled(true);
 
-origemCombo.setBackground(CINZA_CLARO);
-destinoCombo.setBackground(CINZA_CLARO);
+       origemCombo.setBackground(CINZA_CLARO);
+       destinoCombo.setBackground(CINZA_CLARO);
 
-origemCombo.setForeground(PRETO);
-destinoCombo.setForeground(PRETO);
+       origemCombo.setForeground(PRETO);
+       destinoCombo.setForeground(PRETO);
 
-origemCombo.putClientProperty("FlatLaf.style", estiloCombo);
-destinoCombo.putClientProperty("FlatLaf.style", estiloCombo);
+       origemCombo.putClientProperty("FlatLaf.style", estiloCombo);
+       destinoCombo.putClientProperty("FlatLaf.style", estiloCombo);
 
-        // Área de horários e assentos
-        this.jPanel4.setBackground(FUNDO);
-        this.fundoPoltronaPanel.setBackground(FUNDO);
-        this.painelAssentos.setBackground(FUNDO);
-        this.horariosScrollPanel.setBackground(FUNDO);
-        this.horariosScrollPanel.getViewport().setBackground(FUNDO);
+       // Área de horários e assentos
+       this.jPanel4.setBackground(FUNDO);
+       this.fundoPoltronaPanel.setBackground(FUNDO);
+       this.painelAssentos.setBackground(FUNDO);
+       this.horariosScrollPanel.setBackground(FUNDO);
+       this.horariosScrollPanel.getViewport().setBackground(FUNDO);
 
-        // Botões
-        estilizarBotao(voltarBtn);
-        estilizarBotao(selecionarBtn);
-        estilizarBotao(comprarPassagemBtn);
-        estilizarBotao(cancelarBtn);
-    }
-    
-    private void estilizarBotao(JButton botao) {
+       // Botões
+       estilizarBotao(voltarBtn);
+       estilizarBotao(selecionarBtn);
+       estilizarBotao(comprarPassagemBtn);
+       estilizarBotao(cancelarBtn);
 
-        botao.setBackground(AZUL);
-        botao.setForeground(BRANCO);
+       // Botão Conta
+       this.contaBtn.setCursor(
+           new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR)
+       );
 
-        botao.setFont(
-            new java.awt.Font("SansSerif", java.awt.Font.BOLD, 14)
-        );
+       this.contaBtn.putClientProperty(
+           "FlatLaf.style",
+           "arc: 999; background: #0284C7; foreground: #FFFFFF; " +
+           "borderWidth: 0; hoverBackground: #0369A1; " +
+           "pressedBackground: #075985; font: bold 13; margin: 7,18,7,18"
+       );
 
-        botao.setFocusPainted(false);
-        botao.setCursor(
-            new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR)
-        );
+       this.contaBtn.addActionListener(e -> {
+           frameTelas.trocarTela("contaPanel");
+       });
+   }
 
-        botao.putClientProperty(
-            "FlatLaf.style",
-            "arc: 12; background: #087EBD; foreground: #FFFFFF; " +
-            "hoverBackground: #1EA0DC; pressedBackground: #075985; " +
-            "borderWidth: 0"
-        );
-    }
-    
+   private void estilizarBotao(JButton botao) {
+
+       botao.setBackground(AZUL);
+       botao.setForeground(BRANCO);
+
+       botao.setFont(
+           new java.awt.Font("SansSerif", java.awt.Font.BOLD, 14)
+       );
+
+       botao.setFocusPainted(false);
+       botao.setCursor(
+           new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR)
+       );
+
+       botao.putClientProperty(
+           "FlatLaf.style",
+           "arc: 12; background: #087EBD; foreground: #FFFFFF; " +
+           "hoverBackground: #1EA0DC; pressedBackground: #075985; " +
+           "borderWidth: 0"
+       );
+   }    
     private void gerarCardsHorarios() {
         this.painelCardsHorarios.removeAll();
         this.horarioSelecionado = null;
@@ -417,8 +442,9 @@ destinoCombo.putClientProperty("FlatLaf.style", estiloCombo);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(tituloLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 1280, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(507, 507, 507)
+                .addComponent(tituloLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 316, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(463, 463, 463)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
@@ -428,7 +454,7 @@ destinoCombo.putClientProperty("FlatLaf.style", estiloCombo);
                 .addContainerGap()
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel2Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addComponent(tituloLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
@@ -711,7 +737,7 @@ destinoCombo.putClientProperty("FlatLaf.style", estiloCombo);
         this.flagSelecionar = false;
     }//GEN-LAST:event_cancelarBtnActionPerformed
 
-
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelarBtn;
     private javax.swing.JButton comprarPassagemBtn;

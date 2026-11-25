@@ -66,4 +66,68 @@ public class PessoaDAO {
         return null;
     }
     
+    public boolean salvar(Pessoa pessoa){
+        
+        String sql = "INSERT INTO empresa.pessoa (cpf, nome, email, senha, endereco, data_nascimento, sexo) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        
+        try(PreparedStatement stmt = c.prepareStatement(sql)){
+            stmt.setString(1, pessoa.getCpf());
+            stmt.setString(2, pessoa.getNome());
+            stmt.setString(3, pessoa.getEmail());
+            stmt.setString(4, pessoa.getSenha());
+            stmt.setString(5, pessoa.getEndereco());
+            java.sql.Date dataSql = (pessoa.getDataNascimento() != null)
+            ? new java.sql.Date(pessoa.getDataNascimento().getTime())
+            : null;
+            stmt.setDate(6, dataSql);
+            stmt.setString(7, pessoa.getSexo());
+            stmt.executeUpdate();
+            
+            return true;
+            
+        }catch(SQLException ex){
+
+            return false;
+        }
+    }
+    
+    public boolean atualizar(Pessoa pessoa){
+        
+        String sql = "UPDATE empresa.pessoa SET nome = ?, email = ?, senha = ?, endereco = ?, data_nascimento = ?, sexo = ? WHERE cpf = ?";
+        
+        try(PreparedStatement stmt = c.prepareStatement(sql)){
+            stmt.setString(1, pessoa.getNome());
+            stmt.setString(2, pessoa.getEmail());
+            stmt.setString(3, pessoa.getSenha());
+            stmt.setString(4, pessoa.getEndereco());
+            java.sql.Date dataSql = (pessoa.getDataNascimento() != null)
+            ? new java.sql.Date(pessoa.getDataNascimento().getTime())
+            : null;
+            stmt.setDate(5, dataSql);
+            stmt.setString(6, pessoa.getSexo());
+            stmt.setString(7, pessoa.getCpf());
+            
+            return stmt.executeUpdate() > 0;
+            
+        }catch(SQLException ex){
+
+            return false;
+        }
+    }
+    
+    public boolean excluir(String cpf){
+        
+        String sql = "DELETE FROM empresa.pessoa WHERE cpf = ?";
+        
+        try(PreparedStatement stmt = c.prepareStatement(sql)){
+            stmt.setString(1, cpf);
+
+            return stmt.executeUpdate() > 0;
+
+        }catch(SQLException ex){
+
+            return false;
+        }
+    }
+    
 }

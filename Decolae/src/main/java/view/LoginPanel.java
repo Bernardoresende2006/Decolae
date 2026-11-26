@@ -133,6 +133,11 @@ public class LoginPanel extends javax.swing.JPanel {
         cadastrarBtn.setFont(new java.awt.Font("Stylus BT", 1, 14)); // NOI18N
         cadastrarBtn.setForeground(new java.awt.Color(255, 255, 255));
         cadastrarBtn.setText("Cadastrar");
+        cadastrarBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cadastrarBtnActionPerformed(evt);
+            }
+        });
 
         cpfLabel.setFont(new java.awt.Font("Swis721 Blk BT", 0, 12)); // NOI18N
         cpfLabel.setForeground(new java.awt.Color(0, 51, 255));
@@ -296,6 +301,10 @@ public class LoginPanel extends javax.swing.JPanel {
     private void senhaTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_senhaTxtActionPerformed
         this.entrarBtn.doClick();
     }//GEN-LAST:event_senhaTxtActionPerformed
+
+    private void cadastrarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cadastrarBtnActionPerformed
+        this.frameTelas.trocarTela("cadastroPanel");
+    }//GEN-LAST:event_cadastrarBtnActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

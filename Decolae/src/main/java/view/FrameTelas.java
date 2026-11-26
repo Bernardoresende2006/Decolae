@@ -1,4 +1,4 @@
-package view;
+    package view;
 
 import java.awt.CardLayout;
 import javax.swing.JPanel;
@@ -70,12 +70,14 @@ public class FrameTelas extends javax.swing.JFrame {
 
     private void configurarNavegacao() {
         JPanel loginPanel = new LoginPanel(this);
+        JPanel cadastroPanel = new CadastroPanel(this);
         this.menuClientePanel = new MenuClientePanel(this);
         JPanel menuGerentePanel = new MenuGerentePanel(this);
         JPanel menuAdmPanel = new MenuAdmPanel(this);
         JPanel menuMembroPanel = new MenuMembroPanel(this);
 
         this.add(loginPanel, "loginPanel");
+        this.add(cadastroPanel, "cadastroPanel");
         this.add(this.menuClientePanel, "menuClientePanel");
         this.add(menuGerentePanel, "menuGerentePanel");
         this.add(menuAdmPanel, "menuAdmPanel");

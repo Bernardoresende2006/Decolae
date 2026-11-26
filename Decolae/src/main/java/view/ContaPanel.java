@@ -50,7 +50,8 @@ public class ContaPanel extends javax.swing.JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 definirInformacoesCampos();
-                frameTelas.trocarTela(frameTelas.getTelaAnterior());
+                if(frameTelas.getTelaAnterior() == "loginPanel") frameTelas.trocarTela("menuClientePanel"); 
+                else frameTelas.trocarTela(frameTelas.getTelaAnterior());
             }
         });
         

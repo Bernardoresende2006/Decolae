@@ -11,6 +11,7 @@ import model.Pessoa;
 public class FrameTelas extends javax.swing.JFrame {
 
     CardLayout cardLayout;
+    private String telaAtual = "";
     private String telaAnterior = "loginPanel";
     private MenuClientePanel menuClientePanel;
     private Pessoa usuario;
@@ -93,9 +94,8 @@ public class FrameTelas extends javax.swing.JFrame {
 
     public void trocarTela(String nomeTela) {
         
-        if(nomeTela.equals("aeronavePanel") && this.aeronavePanel != null){
-            
-        this.aeronavePanel.atualizarTabela();
+        if(nomeTela.equals("aeronavePanel") && this.aeronavePanel != null){            
+            this.aeronavePanel.atualizarTabela();
         }
         
         this.cardLayout.show(this.getContentPane(), nomeTela);
@@ -106,6 +106,7 @@ public class FrameTelas extends javax.swing.JFrame {
     public void abrirCliente(String origem) {
         this.telaAnterior = origem;
         this.menuClientePanel.atualizarTextoBotao();
+        this.telaAtual = "menuClientePanel";
         trocarTela("menuClientePanel");
     }
 

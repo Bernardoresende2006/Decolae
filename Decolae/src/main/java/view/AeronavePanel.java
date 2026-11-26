@@ -1,15 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
-
-/**
- *
- * @author rot-civ
- */
 package view;
 
+import com.formdev.flatlaf.FlatClientProperties;
 import control.AeronaveControl;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -45,15 +36,11 @@ public class AeronavePanel extends JPanel {
     private List<Aeronave> listaAeronaves;
     private Aeronave aeronaveSelecionada;
 
-    // ===== CORES (Padrão MenuGerentePanel) =====
+    // ===== CORES =====
     private final Color FUNDO = new Color(11, 18, 32);
     private final Color CARD = new Color(18, 28, 48);
     private final Color CARD_CLARO = new Color(30, 41, 59);
     private final Color AZUL = new Color(8, 126, 189);
-    private final Color AZUL_HOVER = new Color(30, 160, 220);
-    private final Color VERMELHO = new Color(185, 28, 28);
-    private final Color VERMELHO_HOVER = new Color(220, 38, 38);
-    private final Color CINZA_BTN = new Color(51, 65, 85);
     private final Color CIANO = new Color(56, 189, 248);
     private final Color BRANCO = Color.WHITE;
     private final Color CINZA = new Color(148, 163, 184);
@@ -62,26 +49,22 @@ public class AeronavePanel extends JPanel {
     private final String FONTE = "SansSerif";
 
     // ===== COMPONENTES DE ESTRUTURA =====
-    private JPanel cabecalho;
     private JLabel logo;
     private JLabel subtitulo;
-    private JPanel linha;
-    private JPanel topo;
-    private JPanel centroWrapper;
-    private JPanel rodape;
-
-    // ===== COMPONENTES PRINCIPAIS =====
     private JPanel Fundo;
     private JPanel PainelLista;
     private JPanel PainelDetalhes;
+
+    // ===== COMPONENTES DA LISTA =====
     private JLabel Titulo;
     private JLabel lblLegenda;
-    private JScrollPane jScrollPane1;
+    private DefaultTableModel modeloTabela;
     private JTable jTable1;
+    private JScrollPane jScrollPane1;
+    private JButton NovaAeronave;
     private JButton Voltar;
-    private BotaoArredondado NovaAeronave;
 
-    // ===== COMPONENTES DO PAINEL DETALHES =====
+    // ===== COMPONENTES DE DETALHES =====
     private JLabel lblTituloDetalhes;
     private JLabel lblAvisoLeitura;
     private JLabel lblId;
@@ -94,122 +77,35 @@ public class AeronavePanel extends JPanel {
     private JTextField txtLocalizacao;
     private JTextField txtAssentos;
     private JTextField txtGerenteCpf;
-    private BotaoArredondado btnCadastrar;
-    private BotaoArredondado btnAtualizar;
-    private BotaoArredondado btnExcluir;
-    private BotaoArredondado btnVoltarDetalhes;
+    private JButton btnCadastrar;
+    private JButton btnAtualizar;
+    private JButton btnExcluir;
+    private JButton btnVoltarDetalhes;
 
     public AeronavePanel(FrameTelas frameTelas) {
         this.frameTelas = frameTelas;
-        this.control = new AeronaveControl();
+
+        inicializacaoVariaveis();
+        minhasConfiguracoes();
         configurarTela();
-        estilizarCOmponentes();
+        estilizarComponentes();
         atualizarTabela();
     }
 
-    // ===== BOTÃO ARREDONDADO =====
-    private class BotaoArredondado extends JButton {
+    private void inicializacaoVariaveis() {
+        control = new AeronaveControl();
 
-        private Color corNormal;
-        private Color corHover;
-
-        public BotaoArredondado(String texto) {
-            super(texto);
-            setContentAreaFilled(false);
-            setFocusPainted(false);
-            setBorderPainted(false);
-            setOpaque(false);
-
-            addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseEntered(MouseEvent e) {
-                    if (isEnabled() && corHover != null) {
-                        setBackground(corHover);
-                    }
-                }
-
-                @Override
-                public void mouseExited(MouseEvent e) {
-                    if (isEnabled() && corNormal != null) {
-                        setBackground(corNormal);
-                    }
-                }
-            });
-        }
-
-        public void definirCores(Color normal, Color hover) {
-            this.corNormal = normal;
-            this.corHover = hover;
-            setBackground(normal);
-        }
-
-        @Override
-        protected void paintComponent(java.awt.Graphics g) {
-            java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
-            g2.setRenderingHint(
-                java.awt.RenderingHints.KEY_ANTIALIASING,
-                java.awt.RenderingHints.VALUE_ANTIALIAS_ON
-            );
-            g2.setColor(getBackground());
-            g2.fillRoundRect(0, 0, getWidth(), getHeight(), 15, 15);
-            g2.dispose();
-            super.paintComponent(g);
-        }
-    }
-
-    // ===== MONTAGEM DA ESTRUTURA E EVENTOS =====
-    private void configurarTela() {
-        setLayout(new BorderLayout());
-
-        // Cabeçalho
-        cabecalho = new JPanel(new BorderLayout());
         logo = new JLabel("DECOLAÊ");
         subtitulo = new JLabel("PAINEL DO GERENTE");
-        cabecalho.add(logo, BorderLayout.WEST);
-        cabecalho.add(subtitulo, BorderLayout.EAST);
 
-        linha = new JPanel();
-        topo = new JPanel(new BorderLayout());
-        topo.add(cabecalho, BorderLayout.CENTER);
-        topo.add(linha, BorderLayout.SOUTH);
-        add(topo, BorderLayout.NORTH);
-
-        // Centro (CardLayout)
-        centroWrapper = new JPanel(new GridBagLayout());
         Fundo = new JPanel(new CardLayout());
-
-        montarPainelLista();
-        montarPainelDetalhes();
-
-        Fundo.add(PainelLista, "lista");
-        Fundo.add(PainelDetalhes, "detalhes");
-
-        centroWrapper.add(Fundo);
-        add(centroWrapper, BorderLayout.CENTER);
-
-        // Rodapé
-        Voltar = new JButton("Voltar ao menu");
-        Voltar.addActionListener(e -> frameTelas.trocarTela("menuGerentePanel"));
-
-        rodape = new JPanel();
-        rodape.add(Voltar);
-        add(rodape, BorderLayout.SOUTH);
-    }
-
-    private void montarPainelLista() {
         PainelLista = new JPanel(new BorderLayout(0, 15));
-
-        JPanel topoLista = new JPanel(new BorderLayout());
-        topoLista.setOpaque(false);
+        PainelDetalhes = new JPanel(new BorderLayout(0, 15));
 
         Titulo = new JLabel("GERENCIAMENTO DE AERONAVES");
         lblLegenda = new JLabel("Clique em uma aeronave para ver detalhes (linhas claras são de outros gerentes)");
 
-        topoLista.add(Titulo, BorderLayout.NORTH);
-        topoLista.add(lblLegenda, BorderLayout.SOUTH);
-        PainelLista.add(topoLista, BorderLayout.NORTH);
-
-        DefaultTableModel modeloTabela = new DefaultTableModel(
+        modeloTabela = new DefaultTableModel(
             new Object[][]{},
             new String[]{"ID", "Modelo", "Localização", "Assentos"}
         ) {
@@ -220,48 +116,12 @@ public class AeronavePanel extends JPanel {
         };
 
         jTable1 = new JTable(modeloTabela);
-        jTable1.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                int row = jTable1.getSelectedRow();
-                if (row >= 0 && listaAeronaves != null && row < listaAeronaves.size()) {
-                    abrirDetalhesEdicao(listaAeronaves.get(row));
-                }
-            }
-        });
-
         jScrollPane1 = new JScrollPane(jTable1);
-        PainelLista.add(jScrollPane1, BorderLayout.CENTER);
-
-        JPanel barraBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        barraBotoes.setOpaque(false);
-
-        NovaAeronave = new BotaoArredondado("Nova Aeronave");
-        NovaAeronave.addActionListener(e -> abrirDetalhesCadastro());
-        barraBotoes.add(NovaAeronave);
-
-        PainelLista.add(barraBotoes, BorderLayout.SOUTH);
-    }
-
-    private void montarPainelDetalhes() {
-        PainelDetalhes = new JPanel(new BorderLayout(0, 15));
-
-        JPanel topoDetalhes = new JPanel(new BorderLayout());
-        topoDetalhes.setOpaque(false);
+        NovaAeronave = new JButton("Nova Aeronave");
+        Voltar = new JButton("Voltar ao menu");
 
         lblTituloDetalhes = new JLabel("DETALHES DA AERONAVE");
         lblAvisoLeitura = new JLabel("Aeronave cadastrada por outro gerente (somente visualização)");
-        lblAvisoLeitura.setVisible(false);
-
-        topoDetalhes.add(lblTituloDetalhes, BorderLayout.NORTH);
-        topoDetalhes.add(lblAvisoLeitura, BorderLayout.SOUTH);
-        PainelDetalhes.add(topoDetalhes, BorderLayout.NORTH);
-
-        JPanel form = new JPanel(new GridBagLayout());
-        form.setOpaque(false);
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(8, 5, 8, 5);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
 
         lblId = new JLabel("ID da Aeronave:", SwingConstants.RIGHT);
         lblModelo = new JLabel("Modelo:", SwingConstants.RIGHT);
@@ -274,23 +134,89 @@ public class AeronavePanel extends JPanel {
         txtLocalizacao = new JTextField(25);
         txtAssentos = new JTextField(25);
         txtGerenteCpf = new JTextField(25);
+
+        btnVoltarDetalhes = new JButton("Voltar");
+        btnCadastrar = new JButton("Cadastrar");
+        btnAtualizar = new JButton("Atualizar");
+        btnExcluir = new JButton("Excluir");
+    }
+
+    private void minhasConfiguracoes(){
+        
+        setLayout(new BorderLayout());
+        setBackground(FUNDO);
+        setPreferredSize(new Dimension(1280, 720));
+
+        jTable1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        jTable1.setFillsViewportHeight(true);
+        jTable1.getTableHeader().setReorderingAllowed(false);
+
         txtGerenteCpf.setEditable(false);
+        lblAvisoLeitura.setVisible(false);
+    }
+
+    private void configurarTela(){
+        
+        JPanel cabecalho = new JPanel(new BorderLayout());
+        cabecalho.setBackground(FUNDO);
+        cabecalho.setBorder(BorderFactory.createEmptyBorder(25, 40, 15, 40));
+        cabecalho.add(logo, BorderLayout.WEST);
+        cabecalho.add(subtitulo, BorderLayout.EAST);
+
+        JPanel linha = new JPanel();
+        linha.setBackground(CIANO);
+        linha.setPreferredSize(new Dimension(0, 2));
+
+        JPanel topo = new JPanel(new BorderLayout());
+        topo.setBackground(FUNDO);
+        topo.add(cabecalho, BorderLayout.CENTER);
+        topo.add(linha, BorderLayout.SOUTH);
+        add(topo, BorderLayout.NORTH);
+
+        JPanel topoLista = new JPanel(new BorderLayout());
+        topoLista.setOpaque(false);
+        topoLista.add(Titulo, BorderLayout.NORTH);
+        topoLista.add(lblLegenda, BorderLayout.SOUTH);
+        PainelLista.add(topoLista, BorderLayout.NORTH);
+
+        jTable1.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = jTable1.getSelectedRow();
+                if (row >= 0 && listaAeronaves != null && row < listaAeronaves.size()) {
+                    abrirDetalhesEdicao(listaAeronaves.get(row));
+                }
+            }
+        });
+        PainelLista.add(jScrollPane1, BorderLayout.CENTER);
+
+        JPanel barraBotoesLista = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        barraBotoesLista.setOpaque(false);
+        NovaAeronave.addActionListener(e -> abrirDetalhesCadastro());
+        barraBotoesLista.add(NovaAeronave);
+        PainelLista.add(barraBotoesLista, BorderLayout.SOUTH);
+
+        JPanel topoDetalhes = new JPanel(new BorderLayout());
+        topoDetalhes.setOpaque(false);
+        topoDetalhes.add(lblTituloDetalhes, BorderLayout.NORTH);
+        topoDetalhes.add(lblAvisoLeitura, BorderLayout.SOUTH);
+        PainelDetalhes.add(topoDetalhes, BorderLayout.NORTH);
+
+        JPanel form = new JPanel(new GridBagLayout());
+        form.setOpaque(false);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(8, 5, 8, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
         adicionarLinhaForm(form, gbc, 0, lblId, txtId);
         adicionarLinhaForm(form, gbc, 1, lblModelo, txtModelo);
         adicionarLinhaForm(form, gbc, 2, lblLocalizacao, txtLocalizacao);
         adicionarLinhaForm(form, gbc, 3, lblAssentos, txtAssentos);
         adicionarLinhaForm(form, gbc, 4, lblGerenteCpf, txtGerenteCpf);
-
         PainelDetalhes.add(form, BorderLayout.CENTER);
 
         JPanel botoesDetalhes = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 0));
         botoesDetalhes.setOpaque(false);
-
-        btnVoltarDetalhes = new BotaoArredondado("Voltar");
-        btnCadastrar = new BotaoArredondado("Cadastrar");
-        btnAtualizar = new BotaoArredondado("Atualizar");
-        btnExcluir = new BotaoArredondado("Excluir");
 
         btnVoltarDetalhes.addActionListener(e -> mostrarCartao("lista"));
         btnCadastrar.addActionListener(e -> acaoCadastrar());
@@ -301,34 +227,26 @@ public class AeronavePanel extends JPanel {
         botoesDetalhes.add(btnExcluir);
         botoesDetalhes.add(btnAtualizar);
         botoesDetalhes.add(btnCadastrar);
-
         PainelDetalhes.add(botoesDetalhes, BorderLayout.SOUTH);
-    }
 
-    private void adicionarLinhaForm(JPanel painel, GridBagConstraints gbc, int linha, JLabel rotulo, JTextField campo) {
-        gbc.gridx = 0;
-        gbc.gridy = linha;
-        gbc.weightx = 0.35;
-        painel.add(rotulo, gbc);
+        JPanel centro = new JPanel(new GridBagLayout());
+        centro.setBackground(FUNDO);
 
-        gbc.gridx = 1;
-        gbc.weightx = 0.65;
-        painel.add(campo, gbc);
-    }
+        Fundo.add(PainelLista, "lista");
+        Fundo.add(PainelDetalhes, "detalhes");
+        centro.add(Fundo);
+        add(centro, BorderLayout.CENTER);
 
-    private void estilizarCOmponentes(){
-        
-        setPreferredSize(new Dimension(1280, 720));
-        
-        // Fundos principais
-        setBackground(FUNDO);
-        cabecalho.setBackground(FUNDO);
-        cabecalho.setBorder(BorderFactory.createEmptyBorder(25, 40, 15, 40));
-        topo.setBackground(FUNDO);
-        centroWrapper.setBackground(FUNDO);
+        Voltar.addActionListener(e -> frameTelas.trocarTela("menuGerentePanel"));
+
+        JPanel rodape = new JPanel();
         rodape.setBackground(FUNDO);
         rodape.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
+        rodape.add(Voltar);
+        add(rodape, BorderLayout.SOUTH);
+    }
 
+    private void estilizarComponentes() {
         // Cabeçalho
         logo.setFont(new Font(FONTE, Font.BOLD, 32));
         logo.setForeground(BRANCO);
@@ -336,18 +254,17 @@ public class AeronavePanel extends JPanel {
         subtitulo.setFont(new Font(FONTE, Font.BOLD, 12));
         subtitulo.setForeground(CIANO);
 
-        linha.setBackground(CIANO);
-        linha.setPreferredSize(new Dimension(0, 2));
-
-        // Cartão central
+        // Cartão central arredondado via FlatLaf
         Fundo.setBackground(CARD);
         Fundo.setPreferredSize(new Dimension(800, 520));
-        Fundo.setBorder(BorderFactory.createLineBorder(CARD_CLARO, 1));
+        Fundo.putClientProperty(FlatClientProperties.STYLE,
+            "arc: 20; border: 1,1,1,1,#1e293b"
+        );
 
-        PainelLista.setBackground(CARD);
+        PainelLista.setOpaque(false);
         PainelLista.setBorder(BorderFactory.createEmptyBorder(25, 30, 25, 30));
 
-        PainelDetalhes.setBackground(CARD);
+        PainelDetalhes.setOpaque(false);
         PainelDetalhes.setBorder(BorderFactory.createEmptyBorder(25, 40, 25, 40));
 
         // Títulos e legendas
@@ -363,22 +280,27 @@ public class AeronavePanel extends JPanel {
         lblAvisoLeitura.setFont(new Font(FONTE, Font.ITALIC, 12));
         lblAvisoLeitura.setForeground(CIANO);
 
-        // Tabela e ScrollPane
+        // Tabela e ScrollPane estilizados via FlatLaf
         jScrollPane1.setBackground(CARD);
         jScrollPane1.getViewport().setBackground(CARD);
-        jScrollPane1.setBorder(BorderFactory.createLineBorder(CARD_CLARO, 1));
+        jScrollPane1.putClientProperty(FlatClientProperties.STYLE,
+            "arc: 12; border: 1,1,1,1,#1e293b"
+        );
+        jScrollPane1.getVerticalScrollBar().putClientProperty(FlatClientProperties.STYLE,
+            "track: #121c30; thumb: #1e293b; hoverThumbColor: #38bdf8; width: 8; trackArc: 999; thumbArc: 999"
+        );
 
+        jTable1.setBackground(CARD);
         jTable1.setRowHeight(34);
         jTable1.setFont(new Font(FONTE, Font.PLAIN, 14));
-        jTable1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jTable1.setShowGrid(false);
         jTable1.setIntercellSpacing(new Dimension(0, 1));
         jTable1.getTableHeader().setFont(new Font(FONTE, Font.BOLD, 13));
         jTable1.getTableHeader().setBackground(FUNDO);
         jTable1.getTableHeader().setForeground(CIANO);
-        jTable1.getTableHeader().setReorderingAllowed(false);
-        jTable1.setBackground(CARD);
-        jTable1.setFillsViewportHeight(true);
+        jTable1.getTableHeader().putClientProperty(FlatClientProperties.STYLE,
+            "bottomSeparatorColor: #1e293b; separatorColor: #1e293b"
+        );
 
         jTable1.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
             @Override
@@ -388,6 +310,8 @@ public class AeronavePanel extends JPanel {
 
                 java.awt.Component c = super.getTableCellRendererComponent(
                         table, value, isSelected, hasFocus, row, column);
+
+                setHorizontalAlignment(SwingConstants.CENTER);
 
                 if (isSelected) {
                     c.setBackground(AZUL);
@@ -406,8 +330,12 @@ public class AeronavePanel extends JPanel {
                 return c;
             }
         });
+        
+        jTable1.getColumnModel().getColumn(0).setPreferredWidth(70);
+        jTable1.getColumnModel().getColumn(1).setPreferredWidth(210);
+        jTable1.getColumnModel().getColumn(2).setPreferredWidth(350);
+        jTable1.getColumnModel().getColumn(3).setPreferredWidth(100);
 
-        // Labels e campos do formulário
         JLabel[] labelsForm = {lblId, lblModelo, lblLocalizacao, lblAssentos, lblGerenteCpf};
         for (JLabel lbl : labelsForm) {
             lbl.setFont(new Font(FONTE, Font.BOLD, 13));
@@ -420,37 +348,53 @@ public class AeronavePanel extends JPanel {
             campo.setBackground(FUNDO);
             campo.setForeground(BRANCO);
             campo.setCaretColor(BRANCO);
-            campo.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(CARD_CLARO, 1),
-                BorderFactory.createEmptyBorder(8, 10, 8, 10)
-            ));
+            campo.putClientProperty(FlatClientProperties.STYLE,
+                "arc: 12; margin: 6,10,6,10; borderColor: #1e293b; focusedBorderColor: #38bdf8; focusWidth: 1"
+            );
         }
 
-        // Botões
-        estilizarBotao(NovaAeronave, AZUL, AZUL_HOVER, 180, 42);
-        estilizarBotao(btnVoltarDetalhes, CARD_CLARO, CINZA_BTN, 120, 40);
-        estilizarBotao(btnCadastrar, AZUL, AZUL_HOVER, 140, 40);
-        estilizarBotao(btnAtualizar, AZUL, AZUL_HOVER, 140, 40);
-        estilizarBotao(btnExcluir, VERMELHO, VERMELHO_HOVER, 130, 40);
+        txtId.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Ex: 106");
+        txtModelo.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Ex: Boeing 737-800");
+        txtLocalizacao.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Ex: Aeroporto de Guarulhos - SP");
+        txtAssentos.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Número entre 1 e 100");
+
+        estilizarBotao(NovaAeronave, "#087ebd", "#1ea0dc", 180, 42);
+        estilizarBotao(btnVoltarDetalhes, "#1e293b", "#334155", 120, 40);
+        estilizarBotao(btnCadastrar, "#087ebd", "#1ea0dc", 140, 40);
+        estilizarBotao(btnAtualizar, "#087ebd", "#1ea0dc", 140, 40);
+        estilizarBotao(btnExcluir, "#b91c1c", "#dc2626", 130, 40);
 
         Voltar.setFont(new Font(FONTE, Font.PLAIN, 13));
         Voltar.setForeground(CINZA);
-        Voltar.setBackground(FUNDO);
-        Voltar.setBorderPainted(false);
-        Voltar.setFocusPainted(false);
-        Voltar.setContentAreaFilled(false);
         Voltar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        Voltar.putClientProperty(FlatClientProperties.STYLE,
+            "buttonType: borderless; hoverForeground: #ffffff; focusWidth: 0"
+        );
     }
 
-    private void estilizarBotao(BotaoArredondado botao, Color normal, Color hover, int largura, int altura) {
-        botao.definirCores(normal, hover);
+    private void estilizarBotao(JButton botao, String hexNormal, String hexHover, int largura, int altura) {
         botao.setPreferredSize(new Dimension(largura, altura));
         botao.setForeground(BRANCO);
         botao.setFont(new Font(FONTE, Font.BOLD, 14));
         botao.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        botao.putClientProperty(FlatClientProperties.STYLE,
+            "arc: 15; borderWidth: 0; focusWidth: 0; " +
+            "background: " + hexNormal + "; " +
+            "hoverBackground: " + hexHover
+        );
     }
 
-    // ===== NAVEGAÇÃO E REGRAS DE NEGÓCIO =====
+    private void adicionarLinhaForm(JPanel painel, GridBagConstraints gbc, int linha, JLabel rotulo, JTextField campo) {
+        gbc.gridx = 0;
+        gbc.gridy = linha;
+        gbc.weightx = 0.35;
+        painel.add(rotulo, gbc);
+
+        gbc.gridx = 1;
+        gbc.weightx = 0.65;
+        painel.add(campo, gbc);
+    }
+
     private void mostrarCartao(String nomeCartao) {
         CardLayout cl = (CardLayout) Fundo.getLayout();
         cl.show(Fundo, nomeCartao);
@@ -470,17 +414,17 @@ public class AeronavePanel extends JPanel {
 
     public void atualizarTabela() {
         listaAeronaves = control.todasAeronaves();
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
-        modelo.setRowCount(0);
+        modeloTabela.setRowCount(0);
 
         for (Aeronave a : listaAeronaves) {
-            modelo.addRow(new Object[]{
+            modeloTabela.addRow(new Object[]{
                 a.getIdAeronave(),
                 a.getModelo(),
                 a.getLocalizacao(),
                 a.getNumAssentos()
             });
         }
+        mostrarCartao("lista");
     }
 
     private void abrirDetalhesCadastro() {
@@ -555,7 +499,6 @@ public class AeronavePanel extends JPanel {
 
         if (resposta.equals("Cadastro realizado.")) {
             atualizarTabela();
-            mostrarCartao("lista");
         }
     }
 
@@ -575,7 +518,6 @@ public class AeronavePanel extends JPanel {
 
         if (resposta.equals("Atualização dos dados realizada.")) {
             atualizarTabela();
-            mostrarCartao("lista");
         }
     }
 
@@ -598,7 +540,6 @@ public class AeronavePanel extends JPanel {
 
             if (resposta.equals("Exclusão concluída com sucesso.")) {
                 atualizarTabela();
-                mostrarCartao("lista");
             }
         }
     }

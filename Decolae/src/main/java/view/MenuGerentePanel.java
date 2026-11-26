@@ -1,4 +1,3 @@
-
 package view;
 
 import java.awt.BorderLayout;
@@ -141,6 +140,10 @@ public class MenuGerentePanel extends JPanel {
         opcoes.setBackground(FUNDO);
         opcoes.setPreferredSize(new Dimension(430, 440));
 
+        aeronavesBtn.addActionListener(e ->
+            frameTelas.trocarTela("aeronavePanel")
+        );
+
         navegarBtn.addActionListener(e ->
             frameTelas.abrirCliente("menuGerentePanel")
         );
@@ -243,135 +246,5 @@ public class MenuGerentePanel extends JPanel {
 
             super.paintComponent(g);
         }
-    }
-
-    private void configurarTela() {
-
-        setLayout(new BorderLayout());
-        setBackground(FUNDO);
-
-        // ===== CABEÇALHO =====
-        JPanel cabecalho = new JPanel(new BorderLayout());
-        cabecalho.setBackground(FUNDO);
-        cabecalho.setBorder(
-            BorderFactory.createEmptyBorder(25, 40, 15, 40)
-        );
-
-        JLabel logo = new JLabel("DECOLAÊ");
-        logo.setFont(new Font(FONTE, Font.BOLD, 32));
-        logo.setForeground(BRANCO);
-
-        JLabel subtitulo = new JLabel("PAINEL DO GERENTE");
-        subtitulo.setFont(new Font(FONTE, Font.BOLD, 12));
-        subtitulo.setForeground(CIANO);
-
-        cabecalho.add(logo, BorderLayout.WEST);
-        cabecalho.add(subtitulo, BorderLayout.EAST);
-
-        JPanel linha = new JPanel();
-        linha.setBackground(CIANO);
-        linha.setPreferredSize(new Dimension(0, 2));
-
-        JPanel topo = new JPanel(new BorderLayout());
-        topo.setBackground(FUNDO);
-        topo.add(cabecalho, BorderLayout.CENTER);
-        topo.add(linha, BorderLayout.SOUTH);
-
-        add(topo, BorderLayout.NORTH);
-
-        // ===== CONTEÚDO CENTRAL =====
-        JPanel conteudo = new JPanel(new GridBagLayout());
-        conteudo.setBackground(FUNDO);
-
-        JPanel opcoes = new JPanel(new GridLayout(6, 1, 0, 15));
-        opcoes.setBackground(FUNDO);
-        opcoes.setPreferredSize(new Dimension(430, 440));
-
-        JLabel mensagem = new JLabel(
-            "Bem-vindo!",
-            SwingConstants.CENTER
-        );
-        mensagem.setFont(new Font(FONTE, Font.BOLD, 30));
-        mensagem.setForeground(BRANCO);
-
-        JLabel descricao = new JLabel(
-            "O que deseja?",
-            SwingConstants.CENTER
-        );
-        descricao.setFont(new Font(FONTE, Font.PLAIN, 15));
-        descricao.setForeground(CINZA);
-
-        JButton funcionariosBtn =
-            criarBotao("Gerenciar funcionários");
-
-        JButton trajetoBtn =
-            criarBotao("Gerenciar trajetos");
-
-        JButton aeronavesBtn =
-            criarBotao("Gerenciar aeronaves");
-        
-        aeronavesBtn.addActionListener(e -> {
-            frameTelas.trocarTela("aeronavePanel");
-        });
-
-        JButton navegarBtn =
-            criarBotao("Navegar como cliente");
-
-        navegarBtn.addActionListener(e -> {
-            frameTelas.abrirCliente("menuGerentePanel");
-        });
-
-        opcoes.add(mensagem);
-        opcoes.add(descricao);
-        opcoes.add(funcionariosBtn);
-        opcoes.add(trajetoBtn);
-        opcoes.add(aeronavesBtn);
-        opcoes.add(navegarBtn);
-
-        conteudo.add(opcoes);
-
-        add(conteudo, BorderLayout.CENTER);
-
-        // ===== RODAPÉ =====
-        JButton sairBtn = new JButton("Sair da conta");
-        sairBtn.setFont(new Font(FONTE, Font.PLAIN, 13));
-        sairBtn.setForeground(CINZA);
-        sairBtn.setBackground(FUNDO);
-        sairBtn.setBorderPainted(false);
-        sairBtn.setFocusPainted(false);
-        sairBtn.setContentAreaFilled(false);
-        sairBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-        sairBtn.addActionListener(e ->
-            frameTelas.trocarTela("loginPanel")
-        );
-
-        JPanel rodape = new JPanel();
-        rodape.setBackground(FUNDO);
-        rodape.setBorder(
-            BorderFactory.createEmptyBorder(10, 10, 20, 10)
-        );
-        rodape.add(sairBtn);
-
-        add(rodape, BorderLayout.SOUTH);
-    }
-
-    // ===== CRIAÇÃO DOS BOTÕES =====
-    private JButton criarBotao(String texto) {
-
-        BotaoArredondado botao = new BotaoArredondado(texto);
-
-        botao.setPreferredSize(new Dimension(430, 65));
-        botao.setBackground(AZUL);
-        botao.corNormal = AZUL;
-
-        botao.setForeground(BRANCO);
-        botao.setFont(new Font(FONTE, Font.BOLD, 16));
-        botao.setBorder(
-            BorderFactory.createEmptyBorder(15, 20, 15, 20)
-        );
-        botao.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-        return botao;
     }
 }

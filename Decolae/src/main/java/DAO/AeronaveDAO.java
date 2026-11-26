@@ -22,7 +22,7 @@ public class AeronaveDAO {
 
     public boolean salvar(Aeronave aeronave){
 
-        String sql = "INSERT INTO aeronave (id_aeronave, modelo, gerente_cpf, localizacao, num_assentos) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO empresa.aeronave (id_aeronave, modelo, gerente_cpf, localizacao, num_assentos) VALUES (?, ?, ?, ?, ?)";
         
         try(PreparedStatement stmt = c.prepareStatement(sql)){
             stmt.setInt(1, aeronave.getIdAeronave());
@@ -42,7 +42,7 @@ public class AeronaveDAO {
 
     public boolean atualizar(Aeronave aeronave){
 
-        String sql = "UPDATE aeronave SET modelo = ?, gerente_cpf = ?, localizacao = ?, num_assentos = ? WHERE id_aeronave = ?";
+        String sql = "UPDATE empresa.aeronave SET modelo = ?, gerente_cpf = ?, localizacao = ?, num_assentos = ? WHERE id_aeronave = ?";
 
         try(PreparedStatement stmt = c.prepareStatement(sql)){
             stmt.setString(1, aeronave.getModelo());
@@ -50,9 +50,8 @@ public class AeronaveDAO {
             stmt.setString(3, aeronave.getLocalizacao());
             stmt.setInt(4, aeronave.getNumAssentos());
             stmt.setInt(5, aeronave.getIdAeronave());
-            stmt.executeUpdate();
 
-            return true;
+            return stmt.executeUpdate() > 0;
 
         }catch(SQLException ex){
 
@@ -61,25 +60,24 @@ public class AeronaveDAO {
     }
 
     public boolean excluir(int idAeronave){
+        
+    String sql = "DELETE FROM empresa.aeronave WHERE id_aeronave = ?";
 
-        String sql = "DELETE FROM aeronave WHERE id_aeronave = ?";
-
-        try(PreparedStatement stmt = c.prepareStatement(sql)){
-            stmt.setInt(1, idAeronave);
-            stmt.executeUpdate();
-
-            return true;
-
-        }catch(SQLException ex){
-
-            return false;
-        }
+    try (PreparedStatement stmt = c.prepareStatement(sql)){
+        stmt.setInt(1, idAeronave);
+        
+        return stmt.executeUpdate() > 0;
+        
+    }catch (SQLException ex){
+        
+        return false;
     }
+}
 
     public List<Aeronave> listarTodos(){
 
         List<Aeronave> aeronaves = new ArrayList<>();
-        String sql = "SELECT * FROM aeronave";
+        String sql = "SELECT * FROM empresa.aeronave";
 
         try(PreparedStatement stmt = c.prepareStatement(sql)){
             ResultSet rs = stmt.executeQuery();

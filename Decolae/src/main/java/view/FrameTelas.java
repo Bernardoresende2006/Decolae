@@ -14,6 +14,7 @@ public class FrameTelas extends javax.swing.JFrame {
     private String telaAnterior = "loginPanel";
     private MenuClientePanel menuClientePanel;
     private Pessoa usuario;
+    private AeronavePanel aeronavePanel;
     
     public FrameTelas() {
         initComponents();        
@@ -73,6 +74,7 @@ public class FrameTelas extends javax.swing.JFrame {
         JPanel cadastroPanel = new CadastroPanel(this);
         this.menuClientePanel = new MenuClientePanel(this);
         JPanel menuGerentePanel = new MenuGerentePanel(this);
+        this.aeronavePanel = new AeronavePanel(this);
         JPanel menuAdmPanel = new MenuAdmPanel(this);
         JPanel menuMembroPanel = new MenuMembroPanel(this);
         JPanel administrarVoosPanel = new AdministrarVoosPanel(this);
@@ -81,6 +83,7 @@ public class FrameTelas extends javax.swing.JFrame {
         this.add(cadastroPanel, "cadastroPanel");
         this.add(this.menuClientePanel, "menuClientePanel");
         this.add(menuGerentePanel, "menuGerentePanel");
+        this.add(this.aeronavePanel, "aeronavePanel");
         this.add(menuAdmPanel, "menuAdmPanel");
         this.add(menuMembroPanel, "menuMembroPanel");
         this.add(administrarVoosPanel, "administrarVoosPanel");
@@ -89,6 +92,12 @@ public class FrameTelas extends javax.swing.JFrame {
     }
 
     public void trocarTela(String nomeTela) {
+        
+        if(nomeTela.equals("aeronavePanel") && this.aeronavePanel != null){
+            
+        this.aeronavePanel.atualizarTabela();
+        }
+        
         this.cardLayout.show(this.getContentPane(), nomeTela);
         this.pack();
         this.setLocationRelativeTo(null);

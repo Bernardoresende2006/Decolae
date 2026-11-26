@@ -75,6 +75,7 @@ public class FrameTelas extends javax.swing.JFrame {
         JPanel menuGerentePanel = new MenuGerentePanel(this);
         JPanel menuAdmPanel = new MenuAdmPanel(this);
         JPanel menuMembroPanel = new MenuMembroPanel(this);
+        JPanel administrarVoosPanel = new AdministrarVoosPanel(this);
 
         this.add(loginPanel, "loginPanel");
         this.add(cadastroPanel, "cadastroPanel");
@@ -82,6 +83,7 @@ public class FrameTelas extends javax.swing.JFrame {
         this.add(menuGerentePanel, "menuGerentePanel");
         this.add(menuAdmPanel, "menuAdmPanel");
         this.add(menuMembroPanel, "menuMembroPanel");
+        this.add(administrarVoosPanel, "administrarVoosPanel");
         
         this.trocarTela("loginPanel");
     }

@@ -59,17 +59,41 @@ public class MenuClientePanel extends javax.swing.JPanel {
      */
     
     private void minhasConfiguracoes() {
-        ((javax.swing.GroupLayout) this.jPanel1.getLayout()).setHonorsVisibility(false);
-        this.setPreferredSize(new java.awt.Dimension(1280, 720));
-
-        this.jPanel2.setMinimumSize(new java.awt.Dimension(1280, 76));
-        this.jPanel2.setPreferredSize(new java.awt.Dimension(1280, 76));
         this.jPanel2.setLayout(new MigLayout("fill, insets 0 24 0 24", "[180!][grow, center][180!]"));
         this.jPanel2.removeAll();
-        this.jPanel2.add(new JLabel()); // Espaçador esquerdo para manter o título centralizado
+        this.jPanel2.add(new JLabel());
         this.jPanel2.add(this.tituloLabel, "center");
         this.jPanel2.add(this.contaBtn, "right");
-        
+
+        this.jPanel1.setLayout(new MigLayout("fill, insets 0 0 24 0, hidemode 3", "[grow]", "[76!][][grow][]"));
+        this.jPanel1.removeAll();
+
+        this.jPanel1.add(this.jPanel2, "growx, wrap");
+
+        JPanel filtrosPanel = new JPanel(new MigLayout("insets 8 40 4 40", "[253!]18[253!]"));
+        filtrosPanel.setOpaque(false);
+        filtrosPanel.add(this.jLabel2, "split 2, flowy, gapbottom 4");
+        filtrosPanel.add(this.origemCombo, "w 253!, h 41!");
+        filtrosPanel.add(this.jLabel3, "split 2, flowy, gapbottom 4");
+        filtrosPanel.add(this.destinoCombo, "w 253!, h 41!");
+        this.jPanel1.add(filtrosPanel, "center, wrap");
+
+        this.jPanel1.add(this.jPanel4, "grow, gapleft 60, gapright 60, gaptop 10, gapbottom 16, wrap");
+
+        JPanel rodapePanel = new JPanel(new MigLayout("fillx, insets 0 32 0 32, hidemode 3", "[140!][grow][140!]"));
+        rodapePanel.setOpaque(false);
+        rodapePanel.add(this.voltarBtn, "left, w 130!, h 42!");
+
+        JPanel acoesCentro = new JPanel(new MigLayout("insets 0, hidemode 3"));
+        acoesCentro.setOpaque(false);
+        acoesCentro.add(this.selecionarBtn, "w 140!, h 42!");
+        acoesCentro.add(this.comprarPassagemBtn, "w 140!, h 42!, gapright 12");
+        acoesCentro.add(this.cancelarBtn, "w 140!, h 42!");
+
+        rodapePanel.add(acoesCentro, "center");
+        rodapePanel.add(new JLabel());
+        this.jPanel1.add(rodapePanel, "growx");
+
         JPanel painelVazio = new JPanel();
         painelVazio.setOpaque(false);
         this.jPanel4.add(painelVazio, "vazio");
@@ -80,13 +104,13 @@ public class MenuClientePanel extends javax.swing.JPanel {
         this.cancelarBtn.setVisible(false);
         this.comprarPassagemBtn.setVisible(false);
 
-        this.fundoPoltronaPanel.setLayout(new MigLayout("fill, insets 10"));
+        this.fundoPoltronaPanel.setLayout(new MigLayout("fill, insets 8"));
         this.fundoPoltronaPanel.removeAll();
-        this.fundoPoltronaPanel.add(this.painelAssentos, "center, w 330!, h 390!");
+        this.fundoPoltronaPanel.add(this.painelAssentos, "center, w 560!, growy");
 
         this.painelAssentos.setLayout(new MigLayout(
-            "fill, wrap 6, insets 8, gapx 4, gapy 2",
-            "[fill, sg a][fill, sg a][fill, sg a]26[fill, sg a][fill, sg a][fill, sg a]",
+            "fill, wrap 6, insets 12, gapx 8, gapy 5",
+            "[fill, sg a][fill, sg a][fill, sg a]44[fill, sg a][fill, sg a][fill, sg a]",
             "[fill]"
         ));
 
@@ -97,6 +121,9 @@ public class MenuClientePanel extends javax.swing.JPanel {
 
         this.origemCombo.setEnabled(true);
         this.destinoCombo.setEnabled(true);
+
+        this.jPanel1.revalidate();
+        this.jPanel1.repaint();
     }
     
     private void criarAssentos() {

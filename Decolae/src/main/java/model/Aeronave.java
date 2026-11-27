@@ -65,4 +65,9 @@ public class Aeronave {
     public void setNumAssentos(int num_assentos) {
         this.num_assentos = num_assentos;
     }
+    
+    @Override
+    public String toString() {
+        return "Aeronave " + id_aeronave + " - " + modelo + " (" + localizacao + ")";
+    }
 }

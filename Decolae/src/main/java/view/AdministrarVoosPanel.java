@@ -1,4 +1,3 @@
-
 package view;
 
 import java.awt.BorderLayout;
@@ -13,6 +12,19 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import com.formdev.flatlaf.FlatClientProperties;
+import control.VooControl;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import model.Aeronave;
+import model.Funcionario;
+import model.Trajeto;
+import model.Voo;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.function.Predicate;
+
 public class AdministrarVoosPanel extends JPanel {
 
     private FrameTelas frameTelas;
@@ -24,20 +36,21 @@ public class AdministrarVoosPanel extends JPanel {
     private final Color BRANCO = Color.WHITE;
     private final Color CINZA = new Color(148, 163, 184);
     private final Color COMPONENTE = new Color(30, 41, 59);
-
+    private JButton limparBtn;
+    private int numVooSelecionado = -1;  
     // COMPONENTES
+    private VooControl control;
+
     private JTable tabelaVoos;
 
-    private JComboBox<String> trajetoCombo;
-    private JComboBox<String> aeronaveCombo;
-    private JComboBox<String> pilotoCombo;
-    private JComboBox<String> copilotoCombo;
-    private JComboBox<String> comissario1Combo;
-    private JComboBox<String> comissario2Combo;
+    private JComboBox<Trajeto> trajetoCombo;
+    private JComboBox<Aeronave> aeronaveCombo;
+    private JComboBox<Funcionario> pilotoCombo;
+    private JComboBox<Funcionario> copilotoCombo;
+    private JComboBox<Funcionario> comissario1Combo;
+    private JComboBox<Funcionario> comissario2Combo;
 
     private JTextField partidaDataTxt;
-    private JTextField partidaHoraTxt;
-    private JTextField chegadaHoraTxt;
     private JTextField numeroVooTxt;
 
     private JButton voltarBtn;
@@ -58,47 +71,23 @@ public class AdministrarVoosPanel extends JPanel {
 
         tabelaVoos = new JTable();
 
-        trajetoCombo = criarCombo(
-            "Selecione um trajeto",
-            "São Paulo → Belo Horizonte",
-            "Rio de Janeiro → Brasília",
-            "Belo Horizonte → Salvador"
-        );
+        control = new VooControl();
 
-        aeronaveCombo = criarCombo(
-            "Selecione uma aeronave",
-            "100", "101", "102"
-        );
-
-        pilotoCombo = criarCombo(
-            "Selecione o piloto",
-            "Piloto 01", "Piloto 02"
-        );
-
-        copilotoCombo = criarCombo(
-            "Selecione o copiloto",
-            "Copiloto 01", "Copiloto 02"
-        );
-
-        comissario1Combo = criarCombo(
-            "Selecione o comissário",
-            "Comissário 01", "Comissário 02"
-        );
-
-        comissario2Combo = criarCombo(
-            "Selecione o comissário",
-            "Comissário 01", "Comissário 02"
-        );
+        trajetoCombo = criarCombo();
+        aeronaveCombo = criarCombo();
+        pilotoCombo = criarCombo();
+        copilotoCombo = criarCombo();
+        comissario1Combo = criarCombo();
+        comissario2Combo = criarCombo();
 
         numeroVooTxt = criarCampo("Número do voo");
         partidaDataTxt = criarCampo("DD/MM/AAAA");
-        partidaHoraTxt = criarCampo("HH:MM");
-        chegadaHoraTxt = criarCampo("HH:MM");
 
         voltarBtn = criarBotaoSecundario("Voltar");
         cadastrarBtn = criarBotaoPrincipal("Cadastrar voo");
         editarBtn = criarBotaoSecundario("Editar voo");
         excluirBtn = criarBotaoSecundario("Excluir voo");
+        limparBtn = criarBotaoSecundario("Limpar");
     }
 
     private void minhasConfiguracoes() {
@@ -174,7 +163,6 @@ public class AdministrarVoosPanel extends JPanel {
 
         add(scroll, BorderLayout.CENTER);
 
-        // BOTÃO VOLTAR
         voltarBtn.addActionListener(e ->
             frameTelas.trocarTela("menuAdmPanel")
         );
@@ -186,18 +174,14 @@ public class AdministrarVoosPanel extends JPanel {
 
         add(rodape, BorderLayout.SOUTH);
 
-        // AÇÕES PROVISÓRIAS
-        cadastrarBtn.addActionListener(e ->
-            mensagemProvisoria("Cadastrar voo")
-        );
+        cadastrarBtn.addActionListener(e -> cadastrarVoo());
+        editarBtn.addActionListener(e -> editarVoo());
+        excluirBtn.addActionListener(e -> excluirVoo());
+        limparBtn.addActionListener(e -> limparFormulario());
 
-        editarBtn.addActionListener(e ->
-            mensagemProvisoria("Editar voo")
-        );
-
-        excluirBtn.addActionListener(e ->
-            mensagemProvisoria("Excluir voo")
-        );
+        tabelaVoos.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) preencherFormulario();
+        });
     }
 
     private JPanel criarPainelListagem() {
@@ -208,29 +192,7 @@ public class AdministrarVoosPanel extends JPanel {
         JLabel titulo = criarTitulo("Voos cadastrados");
         painel.add(titulo, BorderLayout.NORTH);
 
-        String[] colunas = {
-            "Nº Voo", "Origem", "Destino",
-            "Partida", "Chegada", "Aeronave"
-        };
-
-        Object[][] dados = {
-            {"001", "São Paulo", "Belo Horizonte",
-                "26/11/2026 08:00", "26/11/2026 09:10", "100"},
-            {"002", "Rio de Janeiro", "Brasília",
-                "26/11/2026 10:00", "26/11/2026 11:50", "101"},
-            {"003", "Belo Horizonte", "Salvador",
-                "27/11/2026 14:00", "27/11/2026 15:40", "102"}
-        };
-
-        DefaultTableModel modelo = new DefaultTableModel(dados, colunas) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-
-        tabelaVoos.setModel(modelo);
-
+        // A tabela é preenchida por atualizarTabela()
         JScrollPane tabelaScroll = new JScrollPane(tabelaVoos);
         tabelaScroll.setBorder(
             BorderFactory.createLineBorder(new Color(51, 65, 85))
@@ -267,52 +229,23 @@ public class AdministrarVoosPanel extends JPanel {
         );
         formulario.setBackground(FUNDO);
 
-        formulario.add(
-            criarCampoComTitulo("Número do voo", numeroVooTxt)
-        );
-
-        formulario.add(
-            criarCampoComTitulo("Trajeto", trajetoCombo)
-        );
-
-        formulario.add(
-            criarCampoComTitulo("Aeronave", aeronaveCombo)
-        );
-
-        formulario.add(
-            criarCampoComTitulo("Data", partidaDataTxt)
-        );
-
-        formulario.add(
-            criarCampoComTitulo("Horário de partida", partidaHoraTxt)
-        );
-
-        formulario.add(
-            criarCampoComTitulo("Horário de chegada", chegadaHoraTxt)
-        );
-
-        formulario.add(
-            criarCampoComTitulo("Piloto", pilotoCombo)
-        );
-
-        formulario.add(
-            criarCampoComTitulo("Copiloto", copilotoCombo)
-        );
-
-        formulario.add(
-            criarCampoComTitulo("Comissário 1", comissario1Combo)
-        );
-
-        formulario.add(
-            criarCampoComTitulo("Comissário 2", comissario2Combo)
-        );
+        formulario.add(criarCampoComTitulo("Número do voo", numeroVooTxt));
+        formulario.add(criarCampoComTitulo("Trajeto", trajetoCombo));
+        formulario.add(criarCampoComTitulo("Aeronave", aeronaveCombo));
+        formulario.add(criarCampoComTitulo("Data", partidaDataTxt));
+        formulario.add(criarCampoComTitulo("Piloto", pilotoCombo));
+        formulario.add(criarCampoComTitulo("Copiloto", copilotoCombo));
+        formulario.add(criarCampoComTitulo("Comissário 1", comissario1Combo));
+        formulario.add(criarCampoComTitulo("Comissário 2", comissario2Combo));
 
         painel.add(formulario, BorderLayout.CENTER);
 
         JPanel botoes = new JPanel(
             new FlowLayout(FlowLayout.RIGHT)
         );
+        
         botoes.setBackground(FUNDO);
+        botoes.add(limparBtn);
         botoes.add(cadastrarBtn);
 
         painel.add(botoes, BorderLayout.SOUTH);
@@ -348,29 +281,37 @@ public class AdministrarVoosPanel extends JPanel {
         return painel;
     }
 
-    private JComboBox<String> criarCombo(
-        String padrao, String... opcoes
-    ) {
-        JComboBox<String> combo = new JComboBox<>();
-
-        combo.addItem(padrao);
-
-        for (String opcao : opcoes) {
-            combo.addItem(opcao);
-        }
-
+    private <T> JComboBox<T> criarCombo() {
+        JComboBox<T> combo = new JComboBox<>();
         combo.setBackground(COMPONENTE);
         combo.setForeground(BRANCO);
         combo.setFont(new Font("SansSerif", Font.PLAIN, 13));
         combo.setPreferredSize(new Dimension(200, 36));
-
         return combo;
+    }
+
+    private <T> void carregarCombo(JComboBox<T> combo, String placeholder, List<T> itens) {
+        combo.removeAllItems();
+        combo.addItem(null);                 // posição 0 = "nada selecionado"
+        for (T item : itens) combo.addItem(item);
+
+        combo.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public java.awt.Component getListCellRendererComponent(JList<?> list, Object value,
+                    int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value == null) setText(placeholder);   // mostra o texto no lugar do null
+                return this;
+            }
+        });
+
+        combo.setSelectedIndex(0);
     }
 
     private JTextField criarCampo(String placeholder) {
 
         JTextField campo = new JTextField();
-        campo.setText(placeholder);
+        campo.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, placeholder);
         campo.setBackground(COMPONENTE);
         campo.setForeground(BRANCO);
         campo.setCaretColor(BRANCO);
@@ -418,15 +359,222 @@ public class AdministrarVoosPanel extends JPanel {
         return botao;
     }
 
-    // MENSAGENS PROVISÓRIAS
-    private void mensagemProvisoria(String acao) {
-
-        JOptionPane.showMessageDialog(
-            this,
-            "A funcionalidade de " + acao.toLowerCase()
-                + " será implementada posteriormente.",
-            "Em desenvolvimento",
-            JOptionPane.INFORMATION_MESSAGE
-        );
+    public void carregarDados() {
+        carregarCombos();
+        atualizarTabela();
     }
+
+    private void carregarCombos() {
+        carregarCombo(trajetoCombo, "Selecione um trajeto", control.todosTrajetos());
+        carregarCombo(aeronaveCombo, "Selecione uma aeronave", control.todasAeronaves());
+        carregarCombo(pilotoCombo, "Selecione o piloto", control.pilotos());
+        carregarCombo(copilotoCombo, "Selecione o copiloto", control.copilotos());
+
+        List<Funcionario> comissarios = control.comissarios();
+        carregarCombo(comissario1Combo, "Selecione o comissário", comissarios);
+        carregarCombo(comissario2Combo, "Selecione o comissário", comissarios);
+    }
+
+    private void atualizarTabela() {
+        String[] colunas = {"Nº Voo", "Origem", "Destino", "Data", "Partida", "Chegada", "Aeronave"};
+        DateTimeFormatter fData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        DefaultTableModel modelo = new DefaultTableModel(colunas, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        for (Voo v : control.todosVoos()) {
+            modelo.addRow(new Object[]{
+                v.getNumVoo(),
+                v.getOrigem(),
+                v.getDestino(),
+                v.getData().format(fData),
+                v.getHoraPartida(),
+                v.getHoraChegada(),
+                v.getIdAeronave()
+            });
+        }
+
+        tabelaVoos.setModel(modelo);
+    }
+
+    private Voo lerFormulario() {
+
+        int numVoo;
+        try {
+            numVoo = Integer.parseInt(numeroVooTxt.getText().trim());
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Número do voo inválido. Use apenas números.");
+            return null;
+        }
+
+        LocalDate data;
+        try {
+            data = LocalDate.parse(partidaDataTxt.getText().trim(),
+                    DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        } catch (DateTimeParseException ex) {
+            JOptionPane.showMessageDialog(this, "Data inválida. Use o formato dd/mm/aaaa.");
+            return null;
+        }
+
+        Trajeto trajeto = (Trajeto) trajetoCombo.getSelectedItem();
+        Aeronave aeronave = (Aeronave) aeronaveCombo.getSelectedItem();
+        Funcionario piloto = (Funcionario) pilotoCombo.getSelectedItem();
+        Funcionario copiloto = (Funcionario) copilotoCombo.getSelectedItem();
+        Funcionario com1 = (Funcionario) comissario1Combo.getSelectedItem();
+        Funcionario com2 = (Funcionario) comissario2Combo.getSelectedItem();
+
+        if (trajeto == null || aeronave == null || piloto == null
+                || copiloto == null || com1 == null || com2 == null) {
+            JOptionPane.showMessageDialog(this,
+                    "Selecione trajeto, aeronave, piloto, copiloto e os dois comissários.");
+            return null;
+        }
+
+        Voo voo = new Voo();
+        voo.setNumVoo(numVoo);
+        voo.setData(data);
+        voo.setOrigem(trajeto.getOrigem());
+        voo.setDestino(trajeto.getDestino());
+        voo.setHoraPartida(trajeto.getHoraPartida());
+        voo.setHoraChegada(trajeto.getHoraChegada());
+        voo.setIdAeronave(aeronave.getIdAeronave());
+        voo.setPilotoCpf(piloto.getCpf());
+        voo.setCopilotoCpf(copiloto.getCpf());
+        voo.setComissario1Cpf(com1.getCpf());
+        voo.setComissario2Cpf(com2.getCpf());
+
+        if (frameTelas.getUsuario() != null) {
+            voo.setAdmCpf(frameTelas.getUsuario().getCpf());
+        }
+        return voo;
+    }
+
+    private void cadastrarVoo() {
+        if (numVooSelecionado >= 0) {
+            JOptionPane.showMessageDialog(this,
+                    "Há um voo selecionado. Clique em Limpar para cadastrar um novo.");
+            return;
+        }
+
+        Voo voo = lerFormulario();
+        if (voo == null) return;
+
+        String resposta = control.cadastrarVoo(voo);
+        JOptionPane.showMessageDialog(this, resposta);
+
+        if (resposta.equals("Voo cadastrado.")) {
+            limparFormulario();
+            atualizarTabela();
+        }
+    }
+
+    private void editarVoo() {
+        if (numVooSelecionado < 0) {
+            JOptionPane.showMessageDialog(this, "Selecione um voo na tabela para editar.");
+            return;
+        }
+
+        Voo voo = lerFormulario();
+        if (voo == null) return;
+
+        voo.setNumVoo(numVooSelecionado);   // o número do voo não muda na edição
+
+        String resposta = control.atualizarVoo(voo);
+        JOptionPane.showMessageDialog(this, resposta);
+
+        if (resposta.equals("Voo atualizado.")) {
+            int num = numVooSelecionado;
+            atualizarTabela();
+            selecionarLinha(num);
+        }
+    }
+
+    private void excluirVoo() {
+        if (numVooSelecionado < 0) {
+            JOptionPane.showMessageDialog(this, "Selecione um voo na tabela para excluir.");
+            return;
+        }
+
+        int opcao = JOptionPane.showConfirmDialog(this,
+                "Excluir o voo " + numVooSelecionado + "?",
+                "Confirmar exclusão", JOptionPane.YES_NO_OPTION);
+
+        if (opcao != JOptionPane.YES_OPTION) return;
+
+        String resposta = control.excluirVoo(numVooSelecionado);
+        JOptionPane.showMessageDialog(this, resposta);
+
+        if (resposta.equals("Voo excluído.")) {
+            limparFormulario();
+            atualizarTabela();
+        }
+    }
+
+    private void preencherFormulario() {
+        int linha = tabelaVoos.getSelectedRow();
+        if (linha < 0) return;
+
+        int numVoo = (int) tabelaVoos.getValueAt(linha, 0);
+        Voo v = control.buscarVoo(numVoo);
+        if (v == null) return;
+
+        numVooSelecionado = numVoo;
+
+        numeroVooTxt.setText(String.valueOf(numVoo));
+        numeroVooTxt.setEnabled(false);   // o número é a chave: não se altera
+        partidaDataTxt.setText(v.getData().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+
+        selecionarCombo(trajetoCombo, t ->
+                t.getOrigem().equals(v.getOrigem())
+                && t.getDestino().equals(v.getDestino())
+                && t.getHoraPartida().equals(v.getHoraPartida())
+                && t.getHoraChegada().equals(v.getHoraChegada()));
+
+        selecionarCombo(aeronaveCombo, a -> a.getIdAeronave() == v.getIdAeronave());
+        selecionarCombo(pilotoCombo, f -> f.getCpf().equals(v.getPilotoCpf()));
+        selecionarCombo(copilotoCombo, f -> f.getCpf().equals(v.getCopilotoCpf()));
+        selecionarCombo(comissario1Combo, f -> f.getCpf().equals(v.getComissario1Cpf()));
+        selecionarCombo(comissario2Combo, f -> f.getCpf().equals(v.getComissario2Cpf()));
+    }
+    
+    private void selecionarLinha(int numVoo) {
+        for (int i = 0; i < tabelaVoos.getRowCount(); i++) {
+            if ((int) tabelaVoos.getValueAt(i, 0) == numVoo) {
+                tabelaVoos.setRowSelectionInterval(i, i);   // dispara preencherFormulario()
+                return;
+            }
+        }
+    }
+
+    private <T> void selecionarCombo(JComboBox<T> combo, Predicate<T> criterio) {
+        // começa em 1: a posição 0 é o placeholder (null)
+        for (int i = 1; i < combo.getItemCount(); i++) {
+            if (criterio.test(combo.getItemAt(i))) {
+                combo.setSelectedIndex(i);
+                return;
+            }
+        }
+        combo.setSelectedIndex(0);
+    }
+
+    private void limparFormulario() {
+        numVooSelecionado = -1;
+        tabelaVoos.clearSelection();
+
+        numeroVooTxt.setEnabled(true);
+        numeroVooTxt.setText("");
+        partidaDataTxt.setText("");
+
+        trajetoCombo.setSelectedIndex(0);
+        aeronaveCombo.setSelectedIndex(0);
+        pilotoCombo.setSelectedIndex(0);
+        copilotoCombo.setSelectedIndex(0);
+        comissario1Combo.setSelectedIndex(0);
+        comissario2Combo.setSelectedIndex(0);
+    }
+
 }

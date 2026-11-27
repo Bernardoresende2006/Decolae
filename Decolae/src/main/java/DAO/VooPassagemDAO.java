@@ -89,7 +89,7 @@ public class VooPassagemDAO {
     public boolean inserePassagem(int numAssento, String clienteCpf, String origem, String destino, LocalTime horarioPartida){
         String sql = "INSERT INTO empresa.passagem (num_assento, num_voo, cliente_cpf, preco, origem, partida, tempo_trajeto) "
            + "SELECT "
-           + "  ?, "                             
+           + "  ?, "                            
            + "  v.num_voo, "                     
            + "  ?, "                             
            + "  350, "                           

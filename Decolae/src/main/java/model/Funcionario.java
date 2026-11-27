@@ -71,4 +71,11 @@ public class Funcionario extends Pessoa {
     public void setSalario(float salario){
         this.salario = salario;
     }
+    
+    @Override
+    public String toString() {
+        String cpf = getCpf();
+        String fim = (cpf != null && cpf.length() >= 3) ? cpf.substring(cpf.length() - 3) : "";
+        return getNome() + " (CPF ..." + fim + ")";
+    }
 }

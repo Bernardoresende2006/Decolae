@@ -74,5 +74,6 @@ public class Funcionario extends Pessoa {
     
     @Override
     public String toString() {
-        return cpf + " | " + nome + " | " + cargo + " | " + salario;
-    }}
+        return ""+     cpf + "|     " + nome + "     |     " + cargo + "     |      R$" + salario + ",00";
+    }
+}

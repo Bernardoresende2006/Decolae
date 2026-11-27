@@ -305,27 +305,28 @@ public class MenuClientePanel extends javax.swing.JPanel {
        });
    }
 
-   private void estilizarBotao(JButton botao) {
+    private void estilizarBotao(JButton botao) {
 
-       botao.setBackground(AZUL);
-       botao.setForeground(BRANCO);
+        botao.setBackground(AZUL);
+        botao.setForeground(BRANCO);
 
-       botao.setFont(
-           new java.awt.Font("SansSerif", java.awt.Font.BOLD, 14)
-       );
+        botao.setFont(
+            new java.awt.Font("SansSerif", java.awt.Font.BOLD, 14)
+        );
 
-       botao.setFocusPainted(false);
-       botao.setCursor(
-           new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR)
-       );
+        botao.setFocusPainted(false);
+        botao.setCursor(
+            new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR)
+        );
 
-       botao.putClientProperty(
-           "FlatLaf.style",
-           "arc: 12; background: #087EBD; foreground: #FFFFFF; " +
-           "hoverBackground: #1EA0DC; pressedBackground: #075985; " +
-           "borderWidth: 0"
-       );
-   }    
+        botao.putClientProperty(
+            "FlatLaf.style",
+            "arc: 12; background: #087EBD; foreground: #FFFFFF; " +
+            "hoverBackground: #1EA0DC; pressedBackground: #075985; " +
+            "borderWidth: 0"
+        );
+    } 
+    
     private void gerarCardsHorarios() {
         this.painelCardsHorarios.removeAll();
         this.horarioSelecionado = null;
@@ -718,8 +719,13 @@ public class MenuClientePanel extends javax.swing.JPanel {
 
             if (dialog.isPagamentoConfirmado()) {
                 String formaPagamento = dialog.getFormaSelecionada();
+                
+                if(!this.control.verificaDadosCompra(dialog.getCVV(), dialog.getTiular(), dialog.getNcartao())){
+                    JOptionPane.showMessageDialog(null, "Dados Inseridos Incorretamente!", "", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
-                boolean resultInsertPassagem = control.inserePassagemControl(this.numAssentoSelecionado,this.frameTelas.getUsuario().getCpf(), 
+                boolean resultInsertPassagem = this.control.inserePassagemControl(this.numAssentoSelecionado,this.frameTelas.getUsuario().getCpf(), 
                         origemCombo.getSelectedItem()+"", destinoCombo.getSelectedItem()+"", this.horarioSelecionado);
                 
                 if(resultInsertPassagem){

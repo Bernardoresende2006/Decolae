@@ -7,6 +7,7 @@ package view;
 import control.PessoaControl;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import java.awt.Image;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import model.Pessoa;
@@ -37,13 +38,19 @@ public class LoginPanel extends javax.swing.JPanel {
     private void minhasConfiguracoes() {
         this.cardPanel.putClientProperty("FlatLaf.style", "arc: 36; border: 1,1,1,1, #334155, 1, 36");
 
-        Icon imagemAviao = new ImageIcon("src\\main\\java\\Image\\aviao.png");
+        Icon imagemAviao = new ImageIcon("src//main//java//Image//aviao.png");
         this.aviaoLabel.setIcon(imagemAviao);
         this.aviaoLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        
+        ImageIcon iconeSair = new ImageIcon("src//main//java//Image//sair.png");
+        Image redimensionada = iconeSair.getImage().getScaledInstance(52, 52, Image.SCALE_SMOOTH);
+        this.jButton1.setIcon(new ImageIcon(redimensionada));
+        this.jButton1.setBorderPainted(false);
 
         this.jPanel1.setLayout(new net.miginfocom.swing.MigLayout("fill"));
         this.jPanel1.removeAll();
         this.jPanel1.add(this.cardPanel, "center, w 400!, h 515!");
+        this.jPanel1.add(this.jButton1, "pos 10 10, w 40!, h 40!");
 
         this.cardPanel.setLayout(new net.miginfocom.swing.MigLayout(
             "wrap 1, fillx, insets 26 32 32 32, gapy 4"
@@ -124,6 +131,7 @@ public class LoginPanel extends javax.swing.JPanel {
         entrarBtn = new javax.swing.JButton();
         tituloLabel = new javax.swing.JLabel();
         senhaTxt = new javax.swing.JPasswordField();
+        jButton1 = new javax.swing.JButton();
 
         jPanel1.setBackground(new java.awt.Color(11, 17, 32));
 
@@ -237,19 +245,33 @@ public class LoginPanel extends javax.swing.JPanel {
                     .addContainerGap(249, Short.MAX_VALUE)))
         );
 
+        jButton1.setText("jButton1");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(413, 413, 413)
-                .addComponent(cardPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(413, 413, 413)
+                        .addComponent(cardPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(476, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(112, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
                 .addComponent(cardPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(112, 112, 112))
         );
@@ -306,6 +328,10 @@ public class LoginPanel extends javax.swing.JPanel {
         this.frameTelas.trocarTela("cadastroPanel");
     }//GEN-LAST:event_cadastrarBtnActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel aviaoLabel;
@@ -314,6 +340,7 @@ public class LoginPanel extends javax.swing.JPanel {
     private javax.swing.JTextField cpfEmailTxt;
     private javax.swing.JLabel cpfLabel;
     private javax.swing.JButton entrarBtn;
+    private javax.swing.JButton jButton1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel senhaLabel;
     private javax.swing.JPasswordField senhaTxt;

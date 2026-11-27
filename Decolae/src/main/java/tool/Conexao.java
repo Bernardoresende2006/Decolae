@@ -10,10 +10,10 @@ import java.util.logging.Logger;
 public abstract class Conexao {
     public static Connection obterConexao() {
         try {
-            String url = "jdbc:postgresql://localhost:5432/Decolae";
+            String url = "jdbc:postgresql://localhost:5432/decolae";
             String usuario = "postgres";
             //String senha = "qwe123";
-            String senha = "Yoda2023";
+            String senha = "bdpass2141";
 
             Connection con = DriverManager.getConnection(url, usuario, senha);
             return con;

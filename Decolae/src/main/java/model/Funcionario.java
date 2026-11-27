@@ -74,8 +74,5 @@ public class Funcionario extends Pessoa {
     
     @Override
     public String toString() {
-        String cpf = getCpf();
-        String fim = (cpf != null && cpf.length() >= 3) ? cpf.substring(cpf.length() - 3) : "";
-        return getNome() + " (CPF ..." + fim + ")";
-    }
-}
+        return cpf + " | " + nome + " | " + cargo + " | " + salario;
+    }}

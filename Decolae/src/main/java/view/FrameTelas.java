@@ -17,6 +17,7 @@ public class FrameTelas extends javax.swing.JFrame {
     private Pessoa usuario;
     private AeronavePanel aeronavePanel;
     private AdministrarVoosPanel administrarVoosPanel;
+    private FuncionarioPanel funcionarioPanel;
     
     public FrameTelas() {
         initComponents();        
@@ -80,6 +81,7 @@ public class FrameTelas extends javax.swing.JFrame {
         JPanel menuAdmPanel = new MenuAdmPanel(this);
         JPanel menuMembroPanel = new MenuMembroPanel(this);
         this.administrarVoosPanel = new AdministrarVoosPanel(this);
+        this.funcionarioPanel = new FuncionarioPanel(this);
 
         this.add(loginPanel, "loginPanel");
         this.add(cadastroPanel, "cadastroPanel");
@@ -89,6 +91,7 @@ public class FrameTelas extends javax.swing.JFrame {
         this.add(menuAdmPanel, "menuAdmPanel");
         this.add(menuMembroPanel, "menuMembroPanel");
         this.add(administrarVoosPanel, "administrarVoosPanel");
+        this.add(this.funcionarioPanel, "FuncionarioPanel");
         
         this.trocarTela("loginPanel");
     }
@@ -101,6 +104,9 @@ public class FrameTelas extends javax.swing.JFrame {
         if (nomeTela.equals("administrarVoosPanel") && this.administrarVoosPanel != null) {
             this.administrarVoosPanel.carregarDados();
         }
+        if (nomeTela.equals("FuncionarioPanel") && this.funcionarioPanel != null) {
+        this.funcionarioPanel.carregarFuncionarios(); 
+    }
         
         this.cardLayout.show(this.getContentPane(), nomeTela);
         this.pack();

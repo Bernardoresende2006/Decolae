@@ -22,17 +22,23 @@ public class FuncionarioDAO {
         this.c = Conexao.obterConexao();
     }
     
-    public ArrayList<String> consultarFuncionarios(){
+    public ArrayList<Funcionario> listarFuncionarios(){
         
-        ArrayList<String> FuncResults = new ArrayList<>();
+        ArrayList<Funcionario> FuncResults = new ArrayList<>();
         
-        String sql = "SELECT cpf, nome, endereco, data_nascimento, sexo FROM funcionario";
+        String sql = "SELECT cpf, nome, cargo, salario FROM empresa.funcionario, empresa.pessoa WHERE funcionario_cpf= cpf AND cpf IN (SELECT funcionario_cpf FROM empresa.funcionario) ";
         
         try(PreparedStatement consulta = c.prepareStatement(sql)){
             ResultSet resultado = consulta.executeQuery();
             
             while(resultado.next()){
-//                Funcionario f = new Funcionario();
+                Funcionario f = new Funcionario();
+                f.setCpf(resultado.getString("cpf"));
+                f.setNome(resultado.getString("nome"));
+                f.setCargo(resultado.getString("cargo"));
+                f.setSalario(resultado.getFloat("salario"));
+                FuncResults.add(f);
+                
             }
         } catch(SQLException ex){
             Logger.getLogger(FuncionarioDAO.class.getName()).log(Level.SEVERE, null, ex);

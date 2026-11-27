@@ -140,6 +140,10 @@ public class MenuGerentePanel extends JPanel {
         opcoes.setBackground(FUNDO);
         opcoes.setPreferredSize(new Dimension(430, 440));
 
+        funcionariosBtn.addActionListener(e ->
+            frameTelas.trocarTela("FuncionarioPanel")
+        );
+        
         aeronavesBtn.addActionListener(e ->
             frameTelas.trocarTela("aeronavePanel")
         );

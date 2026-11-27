@@ -6,13 +6,13 @@ import java.util.Objects;
 
 public class Pessoa{
 
-    private String cpf;
-    private  String nome;
-    private String email;
-    private String senha;
-    private String endereco;
-    private Date dataNascimento;
-    private String sexo;
+    protected String cpf;
+    protected String nome;
+    protected String email;
+    protected String senha;
+    protected String endereco;
+    protected Date dataNascimento;
+    protected String sexo;
 
     public Pessoa(){
 

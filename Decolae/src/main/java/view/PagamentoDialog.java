@@ -257,6 +257,9 @@ public class PagamentoDialog extends javax.swing.JDialog {
             java.util.logging.Logger.getLogger(PagamentoDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {

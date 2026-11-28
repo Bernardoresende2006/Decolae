@@ -26,6 +26,7 @@ public class FuncionarioPanel extends javax.swing.JPanel {
     private FuncionarioControl control;
     private List<Funcionario> listaFuncionarios;
     private Funcionario funcionarioSelecionado;
+    private FuncionarioDialog funcionarioDialog;
     
     private final Color FUNDO = new Color(11, 18, 32);
     private final Color AZUL = new Color(8, 126, 189);
@@ -40,7 +41,13 @@ public class FuncionarioPanel extends javax.swing.JPanel {
     public FuncionarioPanel(FrameTelas frameTelas){
         this.frameTelas = frameTelas;
         initComponents();
+        inicializarVariaveis();
+        
         carregarFuncionarios();
+    }
+    
+    public void inicializarVariaveis(){
+        this.funcionarioDialog = new FuncionarioDialog(this.frameTelas, true);
     }
     
     public FuncionarioPanel() {
@@ -171,7 +178,10 @@ public class FuncionarioPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-        frameTelas.trocarTela("FuncionarioDialog");
+        //frameTelas.trocarTela("FuncionarioDialog");
+        
+        this.funcionarioDialog.carregarFuncionarioSelecionado(this.getFuncionarioSelecionado());
+        this.funcionarioDialog.setVisible(true);
     }//GEN-LAST:event_jTextField1ActionPerformed
 
     private void VoltarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_VoltarButtonActionPerformed
@@ -191,7 +201,9 @@ public class FuncionarioPanel extends javax.swing.JPanel {
             return;
         }
         this.funcionarioSelecionado = selecionado;
-        frameTelas.trocarTela("FuncionarioDialog");        
+        //frameTelas.trocarTela("FuncionarioDialog");
+        this.funcionarioDialog.carregarFuncionarioSelecionado(funcionarioSelecionado);
+        this.funcionarioDialog.setVisible(true);
     }//GEN-LAST:event_EditarButtonActionPerformed
 
     private void VoltarButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_VoltarButton1ActionPerformed

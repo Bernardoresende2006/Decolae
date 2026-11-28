@@ -5,24 +5,58 @@
 package view;
 
 import DAO.FuncionarioDAO;
+import control.FuncionarioControl;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
 import model.Funcionario;
 
 public class FuncionarioPanel extends javax.swing.JPanel {
     
     private FrameTelas frameTelas;
+    private FuncionarioControl control;
+    private List<Funcionario> listaFuncionarios;
+    private Funcionario funcionarioSelecionado;
+    private FuncionarioDialog funcionarioDialog;
+    
+    private final Color FUNDO = new Color(11, 18, 32);
+    private final Color AZUL = new Color(8, 126, 189);
+    private final Color CIANO = new Color(56, 189, 248);
+    private final Color BRANCO = Color.WHITE;
+    private final Color CINZA = new Color(148, 163, 184);
+    private final Color FUNDO_COMPONENTE = new Color(30, 41, 59);
+    private final Color CINZA_CLARO = new Color(190, 190, 190);
+    private final Color PRETO = Color.BLACK; 
+    
     
     public FuncionarioPanel(FrameTelas frameTelas){
         this.frameTelas = frameTelas;
         initComponents();
+        inicializarVariaveis();
+        
         carregarFuncionarios();
+    }
+    
+    public void inicializarVariaveis(){
+        this.funcionarioDialog = new FuncionarioDialog(this.frameTelas, true);
     }
     
     public FuncionarioPanel() {
         initComponents();
         carregarFuncionarios();
+    }
+    
+    public Funcionario getFuncionarioSelecionado() {
+        return this.funcionarioSelecionado;
     }
     
     public void carregarFuncionarios(){
@@ -46,7 +80,9 @@ public class FuncionarioPanel extends javax.swing.JPanel {
         jScrollPane2 = new javax.swing.JScrollPane();
         jList2 = new javax.swing.JList<>();
         jTextField1 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        VoltarButton = new javax.swing.JButton();
+        EditarButton = new javax.swing.JButton();
+        VoltarButton1 = new javax.swing.JButton();
 
         jLabel1.setFont(new java.awt.Font("Noto Sans", 0, 40)); // NOI18N
         jLabel1.setText("Funcionários");
@@ -75,8 +111,14 @@ public class FuncionarioPanel extends javax.swing.JPanel {
         jTextField1.setText("                    CPF do Funcionário                    |                              Nome                              |                        Cargo                         |                                        Salário ");
         jTextField1.addActionListener(this::jTextField1ActionPerformed);
 
-        jButton1.setText("Voltar");
-        jButton1.addActionListener(this::jButton1ActionPerformed);
+        VoltarButton.setText("Voltar");
+        VoltarButton.addActionListener(this::VoltarButtonActionPerformed);
+
+        EditarButton.setText("Editar");
+        EditarButton.addActionListener(this::EditarButtonActionPerformed);
+
+        VoltarButton1.setText("Cadastrar Novo Funcionário");
+        VoltarButton1.addActionListener(this::VoltarButton1ActionPerformed);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -85,32 +127,36 @@ public class FuncionarioPanel extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addComponent(jButton1)
-                        .addGap(290, 290, 290)
+                        .addGap(387, 387, 387)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(140, 140, 140)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jScrollPane2)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 940, Short.MAX_VALUE))))
+                            .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 940, Short.MAX_VALUE)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(EditarButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(VoltarButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(VoltarButton)))))
                 .addContainerGap(172, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(46, 46, 46)
-                        .addComponent(jButton1)))
+                .addContainerGap()
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(4, 4, 4)
                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(272, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(EditarButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(VoltarButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(VoltarButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(231, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -132,17 +178,43 @@ public class FuncionarioPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-        // TODO add your handling code here:
+        //frameTelas.trocarTela("FuncionarioDialog");
+        
+        this.funcionarioDialog.carregarFuncionarioSelecionado(this.getFuncionarioSelecionado());
+        this.funcionarioDialog.setVisible(true);
     }//GEN-LAST:event_jTextField1ActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here: VOLTARRR        
-        frameTelas.voltarTelaAnterior();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void VoltarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_VoltarButtonActionPerformed
+        frameTelas.trocarTela("menuGerentePanel");
+    }//GEN-LAST:event_VoltarButtonActionPerformed
+
+    private void EditarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EditarButtonActionPerformed
+        Funcionario selecionado = jList2.getSelectedValue();
+        
+        if(selecionado == null){
+            JOptionPane.showMessageDialog(
+            this,
+            "Nenhum funcionário foi selecionado.\nSelecione um funcionário na lista para editar.",
+            "Aviso",
+            JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+        this.funcionarioSelecionado = selecionado;
+        //frameTelas.trocarTela("FuncionarioDialog");
+        this.funcionarioDialog.carregarFuncionarioSelecionado(funcionarioSelecionado);
+        this.funcionarioDialog.setVisible(true);
+    }//GEN-LAST:event_EditarButtonActionPerformed
+
+    private void VoltarButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_VoltarButton1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_VoltarButton1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton EditarButton;
+    private javax.swing.JButton VoltarButton;
+    private javax.swing.JButton VoltarButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JList<Funcionario> jList2;
     private javax.swing.JPanel jPanel1;

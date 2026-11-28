@@ -107,7 +107,7 @@ public class FrameTelas extends javax.swing.JFrame {
             this.administrarVoosPanel.carregarDados();
         }
         if (nomeTela.equals("FuncionarioPanel") && this.funcionarioPanel != null) {
-        this.funcionarioPanel.carregarFuncionarios(); 
+        this.funcionarioPanel.carregarFuncionarios();        
     }
         
         this.cardLayout.show(this.getContentPane(), nomeTela);

@@ -16,6 +16,7 @@ import model.Funcionario;
 import model.Trajeto;
 import model.Voo;
 import tool.Conexao;
+import model.Aeronave;
 
 public class VooDAO {
 
@@ -67,6 +68,43 @@ public class VooDAO {
         }
 
         return trajetos;
+    }
+
+    public List<Aeronave> listarAeronavesLivres(java.time.LocalDateTime janelaInicio,
+                                                java.time.LocalDateTime janelaFim,
+                                                int numVooIgnorar) {
+        List<Aeronave> lista = new ArrayList<>();
+
+        String sql = "SELECT a.id_aeronave, a.modelo, a.gerente_cpf, a.localizacao, a.num_assentos "
+                   + "FROM empresa.aeronave a "
+                   + "WHERE a.id_aeronave NOT IN ( "
+                   + "  SELECT v.id_aeronave FROM empresa.voo v "
+                   + "  WHERE v.num_voo <> ? "
+                   + "  AND v.data + v.horario_partida < ? "
+                   + "  AND v.data + v.horario_chegada "
+                   + "      + CASE WHEN v.horario_chegada <= v.horario_partida "
+                   + "             THEN INTERVAL '1 day' ELSE INTERVAL '0 day' END > ? "
+                   + ") ORDER BY a.id_aeronave";
+
+        try (PreparedStatement stmt = c.prepareStatement(sql)) {
+            stmt.setInt(1, numVooIgnorar);
+            stmt.setTimestamp(2, java.sql.Timestamp.valueOf(janelaFim));
+            stmt.setTimestamp(3, java.sql.Timestamp.valueOf(janelaInicio));
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Aeronave a = new Aeronave();
+                a.setIdAeronave(rs.getInt("id_aeronave"));
+                a.setModelo(rs.getString("modelo"));
+                a.setGerenteCpf(rs.getString("gerente_cpf"));
+                a.setLocalizacao(rs.getString("localizacao"));
+                a.setNumAssentos(rs.getInt("num_assentos"));
+                lista.add(a);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(VooDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return lista;
     }
 
     public List<Funcionario> listarFuncionariosPorCargo(String cargo) {

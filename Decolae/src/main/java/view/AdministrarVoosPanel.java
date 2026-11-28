@@ -25,6 +25,10 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.function.Predicate;
 
+import java.util.ArrayList;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
 public class AdministrarVoosPanel extends JPanel {
 
     private FrameTelas frameTelas;
@@ -178,6 +182,7 @@ public class AdministrarVoosPanel extends JPanel {
         editarBtn.addActionListener(e -> editarVoo());
         excluirBtn.addActionListener(e -> excluirVoo());
         limparBtn.addActionListener(e -> limparFormulario());
+        configurarFiltroAeronaves();
 
         tabelaVoos.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) preencherFormulario();
@@ -366,7 +371,7 @@ public class AdministrarVoosPanel extends JPanel {
 
     private void carregarCombos() {
         carregarCombo(trajetoCombo, "Selecione um trajeto", control.todosTrajetos());
-        carregarCombo(aeronaveCombo, "Selecione uma aeronave", control.todasAeronaves());
+        atualizarAeronavesDisponiveis();
         carregarCombo(pilotoCombo, "Selecione o piloto", control.pilotos());
         carregarCombo(copilotoCombo, "Selecione o copiloto", control.copilotos());
 
@@ -575,6 +580,43 @@ public class AdministrarVoosPanel extends JPanel {
         copilotoCombo.setSelectedIndex(0);
         comissario1Combo.setSelectedIndex(0);
         comissario2Combo.setSelectedIndex(0);
+    }
+    
+    private LocalDate lerDataOuNull() {
+        try {
+            return LocalDate.parse(partidaDataTxt.getText().trim(),
+                    DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        } catch (DateTimeParseException ex) {
+            return null;
+        }
+    }
+
+    private void atualizarAeronavesDisponiveis() {
+        Aeronave anterior = (Aeronave) aeronaveCombo.getSelectedItem();
+        Trajeto trajeto = (Trajeto) trajetoCombo.getSelectedItem();
+        LocalDate data = lerDataOuNull();
+
+        List<Aeronave> livres = control.aeronavesDisponiveis(data, trajeto, numVooSelecionado);
+
+        String aviso = "Selecione uma aeronave";
+        if (trajeto == null || data == null) aviso = "Escolha o trajeto e a data primeiro";
+        else if (livres.isEmpty()) aviso = "Nenhuma aeronave disponível";
+
+        carregarCombo(aeronaveCombo, aviso, livres);
+
+        if (anterior != null) {
+            selecionarCombo(aeronaveCombo, a -> a.getIdAeronave() == anterior.getIdAeronave());
+        }
+    }
+
+    private void configurarFiltroAeronaves() {
+        trajetoCombo.addActionListener(e -> atualizarAeronavesDisponiveis());
+
+        partidaDataTxt.getDocument().addDocumentListener(new DocumentListener() {
+            @Override public void insertUpdate(DocumentEvent e)  { atualizarAeronavesDisponiveis(); }
+            @Override public void removeUpdate(DocumentEvent e)  { atualizarAeronavesDisponiveis(); }
+            @Override public void changedUpdate(DocumentEvent e) { atualizarAeronavesDisponiveis(); }
+        });
     }
 
 }

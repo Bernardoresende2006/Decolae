@@ -13,6 +13,8 @@ import model.Voo;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Arrays;
+import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 public class VooControl {
 
@@ -20,6 +22,7 @@ public class VooControl {
     public static final String COPILOTO = "Copiloto";
     public static final String COMISSARIO = "Comissário de Bordo";
     private static final int ASSENTOS_INICIAIS = 102;
+    private static final int INTERVALO_MINIMO_AERONAVE_HORAS = 8;  
     private PessoaControl pessoaControl; 
 
     private VooDAO dao;
@@ -109,7 +112,10 @@ public class VooControl {
 
         if (!edicao && dao.existeNumVoo(v.getNumVoo())) return "Já existe um voo com esse número";
         if (edicao && !dao.existeNumVoo(v.getNumVoo())) return "O voo não existe mais";
-        
+
+        r = validarDisponibilidadeAeronave(v);
+        if (!r.equals("OK")) return r;
+
         return "OK";
     }
 
@@ -170,4 +176,34 @@ public class VooControl {
         if (dao.excluir(numVoo)) return "Voo excluído.";
         return "Não foi possível excluir o voo.";
     }
+    
+    private LocalDateTime[] periodoDoVoo(LocalDate data, LocalTime partida, LocalTime chegada) {
+        LocalDateTime inicio = LocalDateTime.of(data, partida);
+        LocalDateTime fim = LocalDateTime.of(data, chegada);
+        if (!chegada.isAfter(partida)) fim = fim.plusDays(1);
+        return new LocalDateTime[]{inicio, fim};
+    }
+
+        public List<Aeronave> aeronavesDisponiveis(LocalDate data, Trajeto trajeto, int numVooIgnorar) {
+        if (data == null || trajeto == null) return new java.util.ArrayList<>();
+
+        LocalDateTime[] p = periodoDoVoo(data, trajeto.getHoraPartida(), trajeto.getHoraChegada());
+
+        return dao.listarAeronavesLivres(p[0].minusHours(INTERVALO_MINIMO_AERONAVE_HORAS),
+                                         p[1].plusHours(INTERVALO_MINIMO_AERONAVE_HORAS),
+                                         numVooIgnorar);
+    }
+
+    private String validarDisponibilidadeAeronave(Voo v) {
+        Trajeto trajeto = new Trajeto(v.getOrigem(), v.getDestino(), v.getHoraPartida(), v.getHoraChegada());
+
+        for (Aeronave a : aeronavesDisponiveis(v.getData(), trajeto, v.getNumVoo())) {
+            if (a.getIdAeronave() == v.getIdAeronave()) return "OK";
+        }
+
+        return "Esta aeronave possui outro voo muito próximo deste horário. "
+             + "É necessário um intervalo mínimo de "
+             + INTERVALO_MINIMO_AERONAVE_HORAS + " horas entre voos da mesma aeronave.";
+    }
+
 }

@@ -29,4 +29,17 @@ public class VooPassagemControl {
     public boolean inserePassagemControl(int numAssento, String clienteCpf, String origem, String destino, LocalTime horarioPartida){
         return dao.inserePassagem(numAssento, clienteCpf, origem, destino, horarioPartida);
     }
+    
+    public boolean verificaDadosCompra(String cvv, String titular, String nCartao){
+        if(cvv == null || cvv.trim().isEmpty() || titular == null || titular.trim().isEmpty()) return false;
+        
+        try {
+            Integer.parseInt(cvv.trim());
+            Integer.parseInt(titular.trim());
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        
+        return true;
+    }
 }

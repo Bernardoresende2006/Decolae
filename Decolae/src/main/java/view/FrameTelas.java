@@ -67,7 +67,9 @@ public class FrameTelas extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new FrameTelas().setVisible(true);
+                FrameTelas frame = new FrameTelas();
+                frame.setVisible(true);
+                frame.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
             }
         });
     }
@@ -109,8 +111,6 @@ public class FrameTelas extends javax.swing.JFrame {
     }
         
         this.cardLayout.show(this.getContentPane(), nomeTela);
-        this.pack();
-        this.setLocationRelativeTo(null);
     }
 
     public void abrirCliente(String origem) {

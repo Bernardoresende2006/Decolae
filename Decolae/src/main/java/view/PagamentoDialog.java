@@ -41,6 +41,18 @@ public class PagamentoDialog extends javax.swing.JDialog {
     public String getFormaSelecionada() {
         return formaSelecionada;
     }
+    
+    public String getTiular(){
+        return this.titularTextField.getText();
+    }
+    
+    public String getNcartao(){
+        return this.nCartaoTextField.getText();
+    }
+    
+    public String getCVV(){
+        return this.cvvTextField.getText();
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.

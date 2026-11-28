@@ -18,6 +18,7 @@ public class FrameTelas extends javax.swing.JFrame {
     private AeronavePanel aeronavePanel;
     private AdministrarVoosPanel administrarVoosPanel;
     private FuncionarioPanel funcionarioPanel;
+    private FuncionarioDialog funcionarioDialog;
     
     public FrameTelas() {
         initComponents();        
@@ -84,6 +85,7 @@ public class FrameTelas extends javax.swing.JFrame {
         JPanel menuMembroPanel = new MenuMembroPanel(this);
         this.administrarVoosPanel = new AdministrarVoosPanel(this);
         this.funcionarioPanel = new FuncionarioPanel(this);
+        this.funcionarioDialog = new FuncionarioDialog(this);
 
         this.add(loginPanel, "loginPanel");
         this.add(cadastroPanel, "cadastroPanel");
@@ -94,6 +96,7 @@ public class FrameTelas extends javax.swing.JFrame {
         this.add(menuMembroPanel, "menuMembroPanel");
         this.add(administrarVoosPanel, "administrarVoosPanel");
         this.add(this.funcionarioPanel, "FuncionarioPanel");
+        this.add(this.funcionarioDialog, "FuncionarioDialog");
         
         this.trocarTela("loginPanel");
     }
@@ -108,6 +111,13 @@ public class FrameTelas extends javax.swing.JFrame {
         }
         if (nomeTela.equals("FuncionarioPanel") && this.funcionarioPanel != null) {
         this.funcionarioPanel.carregarFuncionarios(); 
+        
+        if (nomeTela.equals("FuncionarioDialog") && this.funcionarioDialog != null) {
+            this.funcionarioDialog.carregarFuncionarioSelecionado(
+                this.funcionarioPanel.getFuncionarioSelecionado()
+            );
+        }
+        
     }
         
         this.cardLayout.show(this.getContentPane(), nomeTela);
